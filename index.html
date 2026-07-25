@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>問卷調查2026</title>
+    <title>問卷調查</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
@@ -293,6 +293,134 @@
             box-shadow: 0 4px 15px rgba(102,126,234,0.4);
         }
 
+        /* ====== 廣告區塊樣式 ====== */
+        .ad-section {
+            display: none;
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 2px dashed #e8e8e8;
+        }
+
+        .ad-label {
+            font-size: 0.75rem;
+            color: #aaa;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .ad-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border-radius: 16px;
+            padding: 24px;
+            color: white;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ad-card::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .ad-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(245,87,108,0.4);
+        }
+
+        .ad-card .ad-icon {
+            font-size: 3rem;
+            margin-bottom: 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .ad-card .ad-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .ad-card .ad-desc {
+            font-size: 0.95rem;
+            opacity: 0.9;
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .ad-card .ad-cta {
+            display: inline-block;
+            padding: 10px 28px;
+            background: white;
+            color: #f5576c;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            position: relative;
+            z-index: 1;
+            transition: all 0.3s;
+        }
+
+        .ad-card:hover .ad-cta {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        /* 廣告區塊 2 - 簡約風格 */
+        .ad-simple {
+            display: none;
+            margin-top: 24px;
+            background: #f8f9ff;
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .ad-simple .ad-badge {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            font-size: 0.7rem;
+            padding: 4px 12px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+        }
+
+        .ad-simple .ad-text {
+            color: #444;
+            font-size: 1rem;
+            margin-bottom: 12px;
+        }
+
+        .ad-simple .ad-link {
+            color: #667eea;
+            font-weight: 600;
+            text-decoration: none;
+            font-size: 0.95rem;
+        }
+
+        .ad-simple .ad-link:hover {
+            text-decoration: underline;
+        }
+
         /* Info Cards */
         .info-cards {
             display: grid;
@@ -403,7 +531,7 @@
 
                 <!-- Question 1: Name -->
                 <div class="question">
-                    <label>1. 您的大姓名 <span class="required">*</span></label>
+                    <label>1. 您的姓名 <span class="required">*</span></label>
                     <input type="text" name="name" required placeholder="請輸入您的姓名">
                 </div>
 
@@ -517,6 +645,26 @@
                 <h3>提交成功！</h3>
                 <p>感謝您完成問卷，您的意見對我們非常重要。</p>
                 <button class="reset-btn" onclick="resetForm()">再填一份</button>
+
+                <!-- ====== 廣告區塊 1：視覺卡片風格 ====== -->
+                <div class="ad-section" id="adSection1">
+                    <div class="ad-label">贊助內容</div>
+                    <div class="ad-card" onclick="window.open('https://example.com', '_blank')">
+                        <div class="ad-icon">🎁</div>
+			<div class="ad-title">限時優惠 8 折</div>
+			<div class="ad-desc">即日起至月底，全館商品享 8 折優惠</div>
+			<div class="ad-cta">馬上搶購 →</div>
+                    </div>
+                </div>
+
+                <!-- ====== 廣告區塊 2：簡約文字風格（可選） ====== -->
+                <!--
+                <div class="ad-simple" id="adSection2">
+                    <div class="ad-badge">推薦</div>
+                    <div class="ad-text">📢 想學習更多網頁開發技巧？</div>
+                    <a href="https://example.com" target="_blank" class="ad-link">點此查看完整教學 →</a>
+                </div>
+                -->
             </div>
         </div>
 
@@ -549,8 +697,11 @@
         // 設定區域 - 請修改以下內容
         // ============================================
 
-        // Google Apps Script 網址（請參考下方教學取得）
+        // Google Apps Script 網址
         const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyr5LI9BBWz2CeGaBwsEQ96-3LizS03e_Yc-WJ9Z7hkHx_hn5aqW6RS82CXlnsYyRXF/exec';
+
+        // 廣告連結（修改成你要的網址）
+        const AD_LINK = 'https://example.com';
 
         // ============================================
         // 星星評分功能
@@ -644,22 +795,24 @@
             submitBtn.disabled = true;
 
             try {
-                // 如果有設定 Google Script URL，就發送資料
-                if (GOOGLE_SCRIPT_URL !== 'YOUR_GOOGLE_SCRIPT_URL_HERE') {
-                    await fetch(GOOGLE_SCRIPT_URL, {
-                        method: 'POST',
-                        mode: 'no-cors',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(data)
-                    });
-                }
+                // 發送資料到 Google 試算表
+                await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
 
                 // 成功處理
                 loadingOverlay.classList.remove('active');
                 document.getElementById('surveyForm').style.display = 'none';
                 document.getElementById('successMsg').style.display = 'block';
+
+                // ====== 顯示廣告區塊 ======
+                document.getElementById('adSection1').style.display = 'block';
+                // document.getElementById('adSection2').style.display = 'block'; // 如需第二個廣告，取消註解此行
 
             } catch (error) {
                 console.error('提交失敗:', error);
@@ -677,6 +830,10 @@
             document.getElementById('surveyForm').style.display = 'block';
             document.getElementById('successMsg').style.display = 'none';
             document.getElementById('submitBtn').disabled = false;
+
+            // 隱藏廣告
+            document.getElementById('adSection1').style.display = 'none';
+            // document.getElementById('adSection2').style.display = 'none';
 
             // 重置星星
             currentRating = 0;
