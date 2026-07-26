@@ -537,8 +537,8 @@
 
                 <!-- Question 1: Name -->
                 <div class="question">
-                    <label>1. 您的姓名 <span class="required">*</span></label>
-                    <input type="text" name="name" required placeholder="請輸入您的姓名">
+                    <label>1. 您的暱稱 <span class="required">*</span></label>
+                    <input type="text" name="name" required placeholder="請輸入您的暱稱">
                 </div>
 
                 <!-- Question 2: Email -->
@@ -586,44 +586,51 @@
 
                 <!-- Question 5: Interests -->
                 <div class="question">
-                    <label>5. 您感興趣的素食應用主題（可複選）</label>
+                    <label>5. 您感興趣的素食產品（可複選）</label>
                     <div class="checkbox-group">
                         <label class="checkbox-option">
                             <input type="checkbox" name="interests" value="科技">
                             <div class="check-icon"></div>
-                            <span>💻 科技</span>
+                            <span>🥗 素食沙拉</span>
                         </label>
                         <label class="checkbox-option">
                             <input type="checkbox" name="interests" value="設計">
                             <div class="check-icon"></div>
-                            <span>🎨 設計</span>
+                            <span>🍔 植物肉漢堡</span>
                         </label>
                         <label class="checkbox-option">
                             <input type="checkbox" name="interests" value="商業">
                             <div class="check-icon"></div>
-                            <span>💼 商業</span>
+                            <span>🥛 植物奶</span>
                         </label>
                         <label class="checkbox-option">
                             <input type="checkbox" name="interests" value="教育">
                             <div class="check-icon"></div>
-                            <span>📚 教育</span>
+                            <span>🍰 素食甜點</span>
                         </label>
                         <label class="checkbox-option">
                             <input type="checkbox" name="interests" value="健康">
                             <div class="check-icon"></div>
-                            <span>🏃 健康</span>
+                            <span>🧀 素食起司</span>
                         </label>
                         <label class="checkbox-option">
                             <input type="checkbox" name="interests" value="娛樂">
                             <div class="check-icon"></div>
-                            <span>🎮 娛樂</span>
+                            <span>🍜 素食即食麵</span>
                         </label>
                     </div>
                 </div>
 
-                <!-- Question 6: Star Rating -->
+
+
+                <!-- Question 7: Star Rating -->
                 <div class="question">
-                    <label>6. 整體評分</label>
+                    <label>6. 其他建議或意見</label>
+                    <textarea name="feedback" rows="4" placeholder="請輸入您的建議..."></textarea>
+                </div>
+                <!-- Question 6: Feedback -->
+                <div class="question">
+                    <label>7. 整體評分</label>
                     <div class="star-rating" id="starRating">
                         <span class="star" data-value="1">☆</span>
                         <span class="star" data-value="2">☆</span>
@@ -633,12 +640,6 @@
                     </div>
                     <input type="hidden" name="rating" id="ratingInput" value="0">
                     <p class="rating-text" id="ratingText">請點擊星星評分</p>
-                </div>
-
-                <!-- Question 7: Feedback -->
-                <div class="question">
-                    <label>7. 其他建議或意見</label>
-                    <textarea name="feedback" rows="4" placeholder="請輸入您的建議..."></textarea>
                 </div>
 
                 <!-- Submit -->
