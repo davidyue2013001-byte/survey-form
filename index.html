@@ -528,7 +528,7 @@
         <!-- Header -->
         <div class="header">
             <h1>🥬 素食問卷調查</h1>
-            <p>感謝您撥冗填寫，您的意見對我們非常重要</p>
+            <p>感謝您的填寫，您的意見對素食世界的貢獻非常重要</p>
         </div>
 
         <!-- Form Card -->
@@ -589,34 +589,54 @@
                     <label>5. 您感興趣的素食產品（可複選）</label>
                     <div class="checkbox-group">
                         <label class="checkbox-option">
-                            <input type="checkbox" name="interests" value="科技">
+                            <input type="checkbox" name="interests" value="素食沙拉">
                             <div class="check-icon"></div>
                             <span>🥗 素食沙拉</span>
                         </label>
                         <label class="checkbox-option">
-                            <input type="checkbox" name="interests" value="設計">
+                            <input type="checkbox" name="interests" value="植物肉漢堡">
                             <div class="check-icon"></div>
                             <span>🍔 植物肉漢堡</span>
                         </label>
                         <label class="checkbox-option">
-                            <input type="checkbox" name="interests" value="商業">
+                            <input type="checkbox" name="interests" value="植物奶">
                             <div class="check-icon"></div>
                             <span>🥛 植物奶</span>
                         </label>
                         <label class="checkbox-option">
-                            <input type="checkbox" name="interests" value="教育">
+                            <input type="checkbox" name="interests" value="素食甜點">
                             <div class="check-icon"></div>
                             <span>🍰 素食甜點</span>
                         </label>
                         <label class="checkbox-option">
-                            <input type="checkbox" name="interests" value="健康">
+                            <input type="checkbox" name="interests" value="素食起司">
                             <div class="check-icon"></div>
                             <span>🧀 素食起司</span>
                         </label>
                         <label class="checkbox-option">
-                            <input type="checkbox" name="interests" value="娛樂">
+                            <input type="checkbox" name="interests" value="素食即食麵">
                             <div class="check-icon"></div>
                             <span>🍜 素食即食麵</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="interests" value="素食主食">
+                            <div class="check-icon"></div>
+                            <span>🍚 素食主食</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="interests" value="素食小炒">
+                            <div class="check-icon"></div>
+                            <span>🥘 素食小炒</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="interests" value="其它素食菜色">
+                            <div class="check-icon"></div>
+                            <span>🥬 其它素食菜色</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="interests" value="其他素食產品">
+                            <div class="check-icon"></div>
+                            <span>🛒 其他素食產品</span>
                         </label>
                     </div>
                 </div>
@@ -630,7 +650,7 @@
                 </div>
                 <!-- Question 6: Feedback -->
                 <div class="question">
-                    <label>7. 整體評分</label>
+                    <label>7. 對此問卷的對此問卷的整體評分</label>
                     <div class="star-rating" id="starRating">
                         <span class="star" data-value="1">☆</span>
                         <span class="star" data-value="2">☆</span>
@@ -693,9 +713,9 @@
                 <div class="desc">您的資料將受到妥善保護</div>
             </div>
             <div class="info-card">
-                <div class="icon">📱</div>
-                <div class="title">響應式設計</div>
-                <div class="desc">任何裝置都能順暢填寫</div>
+                <div class="icon">👁️</div>
+                <div class="title">瀏覽總數</div>
+                <div class="desc" id="viewCount">載入中...</div>
             </div>
             <div class="info-card">
                 <div class="icon">⚡</div>
@@ -863,6 +883,33 @@
             document.querySelectorAll('.radio-option').forEach(opt => opt.classList.remove('selected'));
             document.querySelectorAll('.checkbox-option').forEach(opt => opt.classList.remove('selected'));
         }
+    
+        // ============================================
+        // 瀏覽計數功能（使用 CountAPI - 免費）
+        // ============================================
+        async function updateViewCount() {
+            const namespace = 'freeganism-world';
+            const key = 'survey-views';
+
+            try {
+                // 增加計數
+                const response = await fetch(`https://api.countapi.xyz/hit/${namespace}/${key}`);
+                const data = await response.json();
+
+                // 顯示計數（格式化數字，如 1,234）
+                const formatted = data.value.toLocaleString('zh-TW');
+                document.getElementById('viewCount').textContent = formatted + ' 次瀏覽';
+            } catch (error) {
+                // 如果 API 失敗，顯示本地計數（使用 localStorage）
+                let localCount = parseInt(localStorage.getItem('surveyViewCount') || '0');
+                localCount++;
+                localStorage.setItem('surveyViewCount', localCount.toString());
+                document.getElementById('viewCount').textContent = localCount.toLocaleString('zh-TW') + ' 次瀏覽（本機）';
+            }
+        }
+
+        // 頁面載入時更新計數
+        updateViewCount();
     </script>
 </body>
 </html>
