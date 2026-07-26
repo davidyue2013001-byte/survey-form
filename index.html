@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-	
-	<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3064213292741436"
+    <!-- Google AdSense 驗證碼 -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3064213292741436"
      crossorigin="anonymous"></script>
-	
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>問卷調查</title>
+    <title>素食問卷調查</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
@@ -18,7 +18,7 @@
 
         body {
             font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #43a047 0%, #2e7d32 100%);
             min-height: 100vh;
             padding: 20px;
         }
@@ -99,8 +99,8 @@
         .question select:focus,
         .question textarea:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
+            border-color: #43a047;
+            box-shadow: 0 0 0 3px rgba(67,160,71,0.1);
         }
 
         .question textarea {
@@ -129,7 +129,7 @@
         }
 
         .radio-option:hover {
-            border-color: #667eea;
+            border-color: #43a047;
             background: rgba(102,126,234,0.05);
         }
 
@@ -138,12 +138,12 @@
         }
 
         .radio-option.selected {
-            border-color: #667eea;
+            border-color: #43a047;
             background: rgba(102,126,234,0.1);
         }
 
         .radio-option input:checked + span {
-            color: #667eea;
+            color: #43a047;
             font-weight: 600;
         }
 
@@ -165,7 +165,7 @@
         }
 
         .checkbox-option:hover {
-            border-color: #667eea;
+            border-color: #43a047;
         }
 
         .checkbox-option input {
@@ -173,7 +173,7 @@
         }
 
         .checkbox-option.selected {
-            border-color: #667eea;
+            border-color: #43a047;
             background: rgba(102,126,234,0.1);
         }
 
@@ -191,8 +191,8 @@
         }
 
         .checkbox-option.selected .check-icon {
-            background: #667eea;
-            border-color: #667eea;
+            background: #43a047;
+            border-color: #43a047;
         }
 
         .checkbox-option.selected .check-icon::after {
@@ -233,7 +233,7 @@
         .submit-btn {
             width: 100%;
             padding: 16px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #43a047 0%, #2e7d32 100%);
             color: white;
             border: none;
             border-radius: 14px;
@@ -241,18 +241,36 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
-            box-shadow: 0 4px 15px rgba(102,126,234,0.4);
+            box-shadow: 0 4px 15px rgba(67,160,71,0.4);
             font-family: inherit;
         }
 
         .submit-btn:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(102,126,234,0.5);
+            box-shadow: 0 8px 25px rgba(67,160,71,0.5);
         }
 
         .submit-btn:disabled {
             opacity: 0.7;
             cursor: not-allowed;
+        }
+
+        /* ====== AdSense 廣告區塊樣式 ====== */
+        .adsense-section {
+            margin: 28px 0;
+            padding: 20px;
+            background: #f1f8e9;
+            border-radius: 12px;
+            border: 1px dashed #a5d6a7;
+            text-align: center;
+        }
+
+        .adsense-label {
+            font-size: 0.7rem;
+            color: #aaa;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
         }
 
         /* Success Message */
@@ -281,7 +299,7 @@
 
         .reset-btn {
             padding: 12px 32px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #43a047 0%, #2e7d32 100%);
             color: white;
             border: none;
             border-radius: 10px;
@@ -294,10 +312,10 @@
 
         .reset-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(102,126,234,0.4);
+            box-shadow: 0 4px 15px rgba(67,160,71,0.4);
         }
 
-        /* ====== 廣告區塊樣式 ====== */
+        /* ====== 手動廣告區塊樣式 ====== */
         .ad-section {
             display: none;
             margin-top: 32px;
@@ -387,41 +405,25 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
 
-        /* 廣告區塊 2 - 簡約風格 */
-        .ad-simple {
-            display: none;
-            margin-top: 24px;
-            background: #f8f9ff;
-            border: 2px solid #667eea;
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
+        /* 廣告合作入口 */
+        .ad-contact {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #eee;
         }
 
-        .ad-simple .ad-badge {
-            display: inline-block;
-            background: #667eea;
-            color: white;
-            font-size: 0.7rem;
-            padding: 4px 12px;
-            border-radius: 12px;
-            margin-bottom: 12px;
+        .ad-contact p {
+            color: #888;
+            font-size: 0.85rem;
         }
 
-        .ad-simple .ad-text {
-            color: #444;
-            font-size: 1rem;
-            margin-bottom: 12px;
-        }
-
-        .ad-simple .ad-link {
-            color: #667eea;
-            font-weight: 600;
+        .ad-contact a {
+            color: #43a047;
             text-decoration: none;
-            font-size: 0.95rem;
+            font-weight: 600;
         }
 
-        .ad-simple .ad-link:hover {
+        .ad-contact a:hover {
             text-decoration: underline;
         }
 
@@ -489,7 +491,7 @@
             width: 50px;
             height: 50px;
             border: 4px solid #e8e8e8;
-            border-top-color: #667eea;
+            border-top-color: #43a047;
             border-radius: 50%;
             animation: spin 1s linear infinite;
             margin-bottom: 16px;
@@ -519,13 +521,13 @@
 <body>
     <div class="loading-overlay" id="loadingOverlay">
         <div class="spinner"></div>
-        <p style="color: #667eea; font-weight: 600;">提交中...</p>
+        <p style="color: #43a047; font-weight: 600;">提交中...</p>
     </div>
 
     <div class="container">
         <!-- Header -->
         <div class="header">
-            <h1>📝 問卷調查</h1>
+            <h1>🥬 素食問卷調查</h1>
             <p>感謝您撥冗填寫，您的意見對我們非常重要</p>
         </div>
 
@@ -561,30 +563,30 @@
 
                 <!-- Question 4: Satisfaction -->
                 <div class="question">
-                    <label>4. 您對本服務的滿意度 <span class="required">*</span></label>
+                    <label>4. 您喜歡素食的程度 <span class="required">*</span></label>
                     <div class="radio-group">
                         <label class="radio-option">
                             <input type="radio" name="satisfaction" value="非常滿意" required>
-                            <span>😊 非常滿意</span>
+                            <span>😊 非常喜歡</span>
                         </label>
                         <label class="radio-option">
                             <input type="radio" name="satisfaction" value="滿意">
-                            <span>🙂 滿意</span>
+                            <span>🙂 喜歡</span>
                         </label>
                         <label class="radio-option">
                             <input type="radio" name="satisfaction" value="普通">
-                            <span>😐 普通</span>
+                            <span>😐 還好</span>
                         </label>
                         <label class="radio-option">
                             <input type="radio" name="satisfaction" value="不滿意">
-                            <span>😕 不滿意</span>
+                            <span>😕 不喜歡</span>
                         </label>
                     </div>
                 </div>
 
                 <!-- Question 5: Interests -->
                 <div class="question">
-                    <label>5. 您感興趣的主題（可複選）</label>
+                    <label>5. 您感興趣的素食應用主題（可複選）</label>
                     <div class="checkbox-group">
                         <label class="checkbox-option">
                             <input type="checkbox" name="interests" value="科技">
@@ -643,6 +645,21 @@
                 <button type="submit" class="submit-btn" id="submitBtn">✅ 提交問卷</button>
             </form>
 
+            <!-- ====== Google AdSense 廣告位置（表單下方） ====== -->
+            <div class="adsense-section">
+                <div class="adsense-label">贊助內容</div>
+                <!-- AdSense 廣告單元 -->
+                <ins class="adsbygoogle"
+                     style="display:block"
+                     data-ad-client="ca-pub-3064213292741436"
+                     data-ad-slot="YOUR_AD_SLOT_ID"
+                     data-ad-format="auto"
+                     data-full-width-responsive="true"></ins>
+                <script>
+                     (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
+            </div>
+
             <!-- Success Message -->
             <div class="success-msg" id="successMsg">
                 <div class="emoji">🎉</div>
@@ -650,25 +667,20 @@
                 <p>感謝您完成問卷，您的意見對我們非常重要。</p>
                 <button class="reset-btn" onclick="resetForm()">再填一份</button>
 
-                <!-- ====== 廣告區塊 1：視覺卡片風格 ====== -->
+                <!-- ====== 手動廣告區塊（提交成功後顯示） ====== -->
                 <div class="ad-section" id="adSection1">
                     <div class="ad-label">贊助內容</div>
                     <div class="ad-card" onclick="window.open('https://ink-fortune-ai.lovable.app', '_blank')">
                         <div class="ad-icon">🎁</div>
-			<div class="ad-title">限時優惠 8 折</div>
-			<div class="ad-desc">即日起至月底，全館商品享 8 折優惠</div>
-			<div class="ad-cta">馬上搶購 →</div>
+                        <div class="ad-title">限時優惠 8 折</div>
+                        <div class="ad-desc">即日起至月底，全館商品享 8 折優惠</div>
+                        <div class="ad-cta">馬上搶購 →</div>
+                    </div>
+                    <!-- 廣告合作入口 -->
+                    <div class="ad-contact">
+                        <p>💼 想在這裡刊登廣告？ <a href="mailto:davidyue2013001@gmail.com?subject=廣告合作詢問">聯絡我們</a></p>
                     </div>
                 </div>
-
-                <!-- ====== 廣告區塊 2：簡約文字風格（可選） ====== -->
-                <!--
-                <div class="ad-simple" id="adSection2">
-                    <div class="ad-badge">推薦</div>
-                    <div class="ad-text">📢 想學習更多網頁開發技巧？</div>
-                    <a href="https://example.com" target="_blank" class="ad-link">點此查看完整教學 →</a>
-                </div>
-                -->
             </div>
         </div>
 
@@ -692,7 +704,7 @@
         </div>
 
         <div class="footer">
-            © 2026 問卷調查系統 | 感謝您的參與
+            © 2026 素食問卷調查系統 | 感謝您的參與
         </div>
     </div>
 
@@ -704,7 +716,7 @@
         // Google Apps Script 網址
         const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyr5LI9BBWz2CeGaBwsEQ96-3LizS03e_Yc-WJ9Z7hkHx_hn5aqW6RS82CXlnsYyRXF/exec';
 
-        // 廣告連結（修改成你要的網址）
+        // 手動廣告連結（修改成你要的網址）
         const AD_LINK = 'https://ink-fortune-ai.lovable.app/';
 
         // ============================================
@@ -721,7 +733,7 @@
                 currentRating = parseInt(this.dataset.value);
                 ratingInput.value = currentRating;
                 ratingText.textContent = ratingLabels[currentRating];
-                ratingText.style.color = '#667eea';
+                ratingText.style.color = '#43a047';
                 updateStars();
             });
 
@@ -812,11 +824,11 @@
                 // 成功處理
                 loadingOverlay.classList.remove('active');
                 document.getElementById('surveyForm').style.display = 'none';
+                document.querySelector('.adsense-section').style.display = 'none';
                 document.getElementById('successMsg').style.display = 'block';
 
-                // ====== 顯示廣告區塊 ======
+                // ====== 顯示手動廣告區塊 ======
                 document.getElementById('adSection1').style.display = 'block';
-                // document.getElementById('adSection2').style.display = 'block'; // 如需第二個廣告，取消註解此行
 
             } catch (error) {
                 console.error('提交失敗:', error);
@@ -832,12 +844,12 @@
         function resetForm() {
             document.getElementById('surveyForm').reset();
             document.getElementById('surveyForm').style.display = 'block';
+            document.querySelector('.adsense-section').style.display = 'block';
             document.getElementById('successMsg').style.display = 'none';
             document.getElementById('submitBtn').disabled = false;
 
-            // 隱藏廣告
+            // 隱藏手動廣告
             document.getElementById('adSection1').style.display = 'none';
-            // document.getElementById('adSection2').style.display = 'none';
 
             // 重置星星
             currentRating = 0;
