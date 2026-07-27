@@ -263,6 +263,15 @@
             border-radius: 12px;
             border: 1px dashed #a5d6a7;
             text-align: center;
+            min-height: 250px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .adsense-section ins.adsbygoogle {
+            display: block;
+            width: 100%;
+            min-height: 250px;
         }
 
         .adsense-label {
@@ -713,7 +722,7 @@
                 <div class="desc">您的資料將受到妥善保護</div>
             </div>
             <div class="info-card">
-                <div class="icon">👁️</div>
+                <div class="icon">📊</div>
                 <div class="title">瀏覽總數</div>
                 <div class="desc" id="viewCount">載入中...</div>
             </div>
@@ -885,27 +894,14 @@
         }
     
         // ============================================
-        // 瀏覽計數功能（使用 CountAPI - 免費）
+        // 瀏覽計數功能（使用 localStorage）
         // ============================================
-        async function updateViewCount() {
-            const namespace = 'freeganism-world';
-            const key = 'survey-views';
-
-            try {
-                // 增加計數
-                const response = await fetch(`https://api.countapi.xyz/hit/${namespace}/${key}`);
-                const data = await response.json();
-
-                // 顯示計數（格式化數字，如 1,234）
-                const formatted = data.value.toLocaleString('zh-TW');
-                document.getElementById('viewCount').textContent = formatted + ' 次瀏覽';
-            } catch (error) {
-                // 如果 API 失敗，顯示本地計數（使用 localStorage）
-                let localCount = parseInt(localStorage.getItem('surveyViewCount') || '0');
-                localCount++;
-                localStorage.setItem('surveyViewCount', localCount.toString());
-                document.getElementById('viewCount').textContent = localCount.toLocaleString('zh-TW') + ' 次瀏覽（本機）';
-            }
+        function updateViewCount() {
+            // 使用 localStorage 計數
+            let localCount = parseInt(localStorage.getItem('surveyViewCount') || '0');
+            localCount++;
+            localStorage.setItem('surveyViewCount', localCount.toString());
+            document.getElementById('viewCount').textContent = localCount.toLocaleString('zh-TW') + ' 次瀏覽';
         }
 
         // 頁面載入時更新計數
