@@ -1,281 +1,567 @@
 <!DOCTYPE html>
-
-
 <html lang="zh-TW">
 <head>
-    <!-- Google AdSense 驗證碼 -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3064213292741436"
-     crossorigin="anonymous"></script>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>素食問卷調查</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3064213292741436" crossorigin="anonymous"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --primary: #43a047;
+            --primary-dark: #2e7d32;
+            --primary-light: #66bb6a;
+            --accent: #ff9800;
+            --danger: #e74c3c;
+            --bg-gradient-start: #43a047;
+            --bg-gradient-end: #1b5e20;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --text-primary: #1a1a2e;
+            --text-secondary: #555;
+            --border: #e0e0e0;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
+            --shadow-md: 0 8px 32px rgba(0,0,0,0.12);
+            --shadow-lg: 0 20px 60px rgba(0,0,0,0.18);
+            --radius-sm: 12px;
+            --radius-md: 16px;
+            --radius-lg: 20px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Noto Sans TC', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, #43a047 0%, #2e7d32 100%);
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
             min-height: 100vh;
             padding: 20px;
+            position: relative;
+            overflow-x: hidden;
         }
-
+        #particleCanvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
         .container {
             max-width: 720px;
             margin: 0 auto;
+            position: relative;
+            z-index: 1;
         }
-
-        /* Header */
+        .lang-switcher {
+            display: flex;
+            gap: 4px;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            padding: 4px 6px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.3);
+            font-size: 0.75rem;
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 10;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .lang-btn {
+            padding: 6px 14px;
+            border: none;
+            border-radius: 16px;
+            background: transparent;
+            color: rgba(255,255,255,0.8);
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: inherit;
+        }
+        .lang-btn:hover { background: rgba(255,255,255,0.15); color: white; }
+        .lang-btn.active {
+            background: white;
+            color: var(--primary);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
         .header {
             text-align: center;
-            padding: 40px 20px;
+            padding: 50px 20px 30px;
             color: white;
         }
-
         .header h1 {
-            font-size: 2.5rem;
+            font-size: 2.6rem;
             margin-bottom: 12px;
             font-weight: 700;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            text-shadow: 0 4px 20px rgba(0,0,0,0.25);
+            animation: fadeInDown 0.8s ease-out;
         }
-
         .header p {
             font-size: 1.1rem;
-            opacity: 0.9;
+            opacity: 0.92;
+            max-width: 480px;
+            margin: 0 auto;
+            line-height: 1.6;
+            min-height: 1.8em;
         }
-
-        /* Form Card */
-        .form-card {
+        .typing-cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1.2em;
             background: white;
-            border-radius: 20px;
-            padding: 32px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
-            margin-bottom: 24px;
+            margin-left: 2px;
+            animation: blink 1s infinite;
+            vertical-align: text-bottom;
         }
-
-        .form-card h2 {
-            color: #333;
-            margin-bottom: 24px;
-            font-size: 1.4rem;
-        }
-
-        /* Question Block */
-        .question {
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+        .info-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
             margin-bottom: 28px;
         }
-
+        .info-card {
+            background: rgba(255,255,255,0.12);
+            backdrop-filter: blur(12px);
+            border-radius: var(--radius-md);
+            padding: 20px 14px;
+            color: white;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.15);
+            transition: var(--transition);
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        .info-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .info-card:hover {
+            transform: translateY(-4px);
+            background: rgba(255,255,255,0.2);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        }
+        .info-card .icon {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+            display: block;
+        }
+        .info-card .title {
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 4px;
+        }
+        .info-card .desc {
+            font-size: 0.78rem;
+            opacity: 0.75;
+        }
+        .form-card {
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: 36px;
+            box-shadow: var(--shadow-lg);
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        .form-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .form-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light), var(--accent));
+            background-size: 200% 100%;
+            animation: shimmerBar 3s ease infinite;
+        }
+        @keyframes shimmerBar {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .progress-container {
+            margin-bottom: 28px;
+            padding: 0 4px;
+        }
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .progress-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        .progress-percent {
+            font-size: 0.85rem;
+            color: var(--primary);
+            font-weight: 700;
+        }
+        .progress-bar-bg {
+            width: 100%;
+            height: 8px;
+            background: #e8f5e9;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            border-radius: 10px;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 0%;
+            position: relative;
+        }
+        .progress-bar-fill::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            animation: progressShine 2s infinite;
+        }
+        @keyframes progressShine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        .question {
+            margin-bottom: 28px;
+            opacity: 0;
+            transform: translateX(-15px);
+            transition: all 0.5s ease;
+        }
+        .question.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
         .question label {
             display: block;
-            color: #444;
+            color: var(--text-primary);
             font-weight: 600;
             margin-bottom: 10px;
             font-size: 1.05rem;
         }
-
-        .required {
-            color: #e74c3c;
+        .required { color: var(--danger); }
+        .hint {
+            font-size: 0.8rem;
+            color: #888;
+            margin-top: -6px;
+            margin-bottom: 8px;
+            font-weight: 400;
         }
-
-        /* Text Input */
         .question input[type="text"],
         .question input[type="email"],
         .question select,
         .question textarea {
             width: 100%;
-            padding: 14px 16px;
-            border: 2px solid #e8e8e8;
-            border-radius: 12px;
+            padding: 14px 18px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
             font-size: 1rem;
             font-family: inherit;
-            transition: all 0.3s;
+            transition: var(--transition);
             background: white;
+            color: var(--text-primary);
         }
-
-        .question input[type="text"]:focus,
-        .question input[type="email"]:focus,
+        .question input:focus,
         .question select:focus,
         .question textarea:focus {
             outline: none;
-            border-color: #43a047;
-            box-shadow: 0 0 0 3px rgba(67,160,71,0.1);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(67,160,71,0.1);
         }
-
+        .question input.error,
+        .question select.error,
+        .question textarea.error {
+            border-color: var(--danger);
+            animation: shake 0.5s ease;
+            box-shadow: 0 0 0 4px rgba(231,76,60,0.1);
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-8px); }
+            40% { transform: translateX(8px); }
+            60% { transform: translateX(-4px); }
+            80% { transform: translateX(4px); }
+        }
         .question textarea {
             resize: vertical;
-            min-height: 100px;
+            min-height: 110px;
+            line-height: 1.6;
         }
-
-        /* Radio Buttons */
+        .question select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2343a047' viewBox='0 0 16 16'%3E%3Cpath d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            padding-right: 44px;
+        }
         .radio-group {
             display: flex;
             flex-wrap: wrap;
             gap: 12px;
         }
-
         .radio-option {
             display: flex;
             align-items: center;
-            padding: 12px 20px;
-            border: 2px solid #e8e8e8;
-            border-radius: 12px;
+            padding: 14px 22px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
             cursor: pointer;
-            transition: all 0.3s;
+            transition: var(--transition);
             flex: 1;
             min-width: 120px;
             justify-content: center;
+            background: white;
+            position: relative;
+            overflow: hidden;
         }
-
+        .radio-option::before {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 0; height: 0;
+            background: rgba(67,160,71,0.08);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.4s ease, height 0.4s ease;
+        }
+        .radio-option:hover::before {
+            width: 200px; height: 200px;
+        }
         .radio-option:hover {
-            border-color: #43a047;
-            background: rgba(102,126,234,0.05);
+            border-color: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
         }
-
-        .radio-option input {
-            display: none;
-        }
-
+        .radio-option input { display: none; }
         .radio-option.selected {
-            border-color: #43a047;
-            background: rgba(102,126,234,0.1);
+            border-color: var(--primary);
+            background: rgba(67,160,71,0.06);
+            box-shadow: 0 0 0 3px rgba(67,160,71,0.15);
         }
-
         .radio-option input:checked + span {
-            color: #43a047;
+            color: var(--primary);
             font-weight: 600;
         }
-
-        /* Checkboxes */
+        .radio-option span {
+            position: relative;
+            z-index: 1;
+            transition: color 0.3s;
+        }
         .checkbox-group {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
             gap: 10px;
         }
-
         .checkbox-option {
             display: flex;
             align-items: center;
-            padding: 10px 14px;
-            border: 2px solid #e8e8e8;
-            border-radius: 10px;
+            padding: 12px 16px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
             cursor: pointer;
-            transition: all 0.3s;
+            transition: var(--transition);
+            background: white;
+            position: relative;
+            overflow: hidden;
         }
-
+        .checkbox-option::before {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 0; height: 0;
+            background: rgba(67,160,71,0.08);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.4s ease, height 0.4s ease;
+        }
+        .checkbox-option:hover::before {
+            width: 200px; height: 200px;
+        }
         .checkbox-option:hover {
-            border-color: #43a047;
+            border-color: var(--primary-light);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-sm);
         }
-
-        .checkbox-option input {
-            display: none;
-        }
-
+        .checkbox-option input { display: none; }
         .checkbox-option.selected {
-            border-color: #43a047;
-            background: rgba(102,126,234,0.1);
+            border-color: var(--primary);
+            background: rgba(67,160,71,0.06);
+            box-shadow: 0 0 0 3px rgba(67,160,71,0.15);
         }
-
-        .checkbox-option .check-icon {
-            width: 18px;
-            height: 18px;
+        .check-icon {
+            width: 20px; height: 20px;
             border: 2px solid #ccc;
-            border-radius: 4px;
+            border-radius: 5px;
             margin-right: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.3s;
+            transition: var(--transition);
             flex-shrink: 0;
+            position: relative;
+            z-index: 1;
         }
-
         .checkbox-option.selected .check-icon {
-            background: #43a047;
-            border-color: #43a047;
+            background: var(--primary);
+            border-color: var(--primary);
+            transform: scale(1.1);
         }
-
         .checkbox-option.selected .check-icon::after {
             content: "✓";
             color: white;
             font-size: 12px;
             font-weight: bold;
+            animation: checkPop 0.3s ease;
         }
-
-        /* Star Rating */
+        @keyframes checkPop {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+        .checkbox-option span {
+            position: relative;
+            z-index: 1;
+        }
         .star-rating {
             display: flex;
-            gap: 8px;
-            font-size: 2.2rem;
+            gap: 10px;
+            font-size: 2.4rem;
             cursor: pointer;
+            padding: 4px 0;
         }
-
         .star {
-            transition: transform 0.2s;
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
             user-select: none;
+            color: #ddd;
+            filter: grayscale(0.3);
         }
-
         .star:hover {
-            transform: scale(1.2);
+            transform: scale(1.3) rotate(5deg);
+            filter: grayscale(0);
         }
-
         .star.active {
-            filter: drop-shadow(0 0 4px rgba(255,193,7,0.5));
+            filter: drop-shadow(0 0 6px rgba(255,193,7,0.6)) grayscale(0);
+            animation: starPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-
+        @keyframes starPop {
+            0% { transform: scale(0.5); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
         .rating-text {
             color: #888;
             font-size: 0.9rem;
-            margin-top: 8px;
+            margin-top: 10px;
+            font-weight: 500;
+            transition: color 0.3s;
         }
-
-        /* Submit Button */
         .submit-btn {
             width: 100%;
-            padding: 16px;
-            background: linear-gradient(135deg, #43a047 0%, #2e7d32 100%);
+            padding: 18px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             color: white;
             border: none;
-            border-radius: 14px;
+            border-radius: var(--radius-sm);
             font-size: 1.1rem;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 4px 15px rgba(67,160,71,0.4);
+            transition: var(--transition);
+            box-shadow: 0 4px 20px rgba(67,160,71,0.35);
             font-family: inherit;
+            position: relative;
+            overflow: hidden;
+            margin-top: 8px;
         }
-
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.6s ease;
+        }
+        .submit-btn:hover::before { left: 100%; }
         .submit-btn:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(67,160,71,0.5);
+            box-shadow: 0 8px 30px rgba(67,160,71,0.45);
         }
-
+        .submit-btn:active:not(:disabled) { transform: translateY(0); }
         .submit-btn:disabled {
             opacity: 0.7;
             cursor: not-allowed;
         }
-
-        /* ====== AdSense 廣告區塊樣式 ====== */
+        .submit-btn .btn-text { position: relative; z-index: 1; }
+        .submit-btn .btn-loader {
+            display: none;
+            position: relative;
+            z-index: 1;
+        }
+        .submit-btn.loading .btn-text { display: none; }
+        .submit-btn.loading .btn-loader {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: center;
+        }
+        .btn-loader .dot {
+            width: 8px; height: 8px;
+            background: white;
+            border-radius: 50%;
+            animation: dotBounce 1.4s infinite ease-in-out both;
+        }
+        .btn-loader .dot:nth-child(1) { animation-delay: -0.32s; }
+        .btn-loader .dot:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes dotBounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+        .autosave-indicator {
+            position: absolute;
+            top: 16px;
+            left: 20px;
+            font-size: 0.75rem;
+            color: #888;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .autosave-indicator.visible { opacity: 1; }
+        .autosave-indicator .save-dot {
+            width: 6px; height: 6px;
+            background: var(--primary);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
         .adsense-section {
-            margin: 28px 0;
+            margin: 28px 0 0;
             padding: 20px;
             background: #f1f8e9;
-            border-radius: 12px;
+            border-radius: var(--radius-sm);
             border: 1px dashed #a5d6a7;
             text-align: center;
             min-height: 250px;
             width: 100%;
             overflow: hidden;
         }
-
         .adsense-section ins.adsbygoogle {
             display: block;
             width: 100%;
             min-height: 250px;
         }
-
         .adsense-label {
             font-size: 0.7rem;
             color: #aaa;
@@ -283,121 +569,104 @@
             letter-spacing: 1px;
             margin-bottom: 12px;
         }
-
-        /* Success Message */
         .success-msg {
             display: none;
             text-align: center;
-            padding: 40px 20px;
+            padding: 50px 20px 30px;
+            animation: fadeInScale 0.6s ease;
         }
-
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
         .success-msg .emoji {
-            font-size: 4rem;
+            font-size: 4.5rem;
             margin-bottom: 16px;
+            display: inline-block;
+            animation: bounceIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-
+        @keyframes bounceIn {
+            0% { transform: scale(0); }
+            60% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
         .success-msg h3 {
-            color: #333;
-            font-size: 1.5rem;
+            color: var(--text-primary);
+            font-size: 1.6rem;
             margin-bottom: 12px;
         }
-
         .success-msg p {
-            color: #666;
+            color: var(--text-secondary);
             font-size: 1rem;
-            margin-bottom: 24px;
+            margin-bottom: 28px;
+            line-height: 1.6;
         }
-
         .reset-btn {
-            padding: 12px 32px;
-            background: linear-gradient(135deg, #43a047 0%, #2e7d32 100%);
+            padding: 14px 36px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             color: white;
             border: none;
-            border-radius: 10px;
+            border-radius: var(--radius-sm);
             font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
             font-family: inherit;
-            transition: all 0.3s;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(67,160,71,0.35);
         }
-
         .reset-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(67,160,71,0.4);
+            box-shadow: 0 8px 25px rgba(67,160,71,0.45);
         }
-
-        /* ====== 手動廣告區塊樣式 ====== */
         .ad-section {
             display: none;
-            margin-top: 32px;
-            padding-top: 24px;
+            margin-top: 36px;
+            padding-top: 28px;
             border-top: 2px dashed #e8e8e8;
+            animation: fadeInUp 0.6s ease 0.3s both;
         }
-
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
         .ad-label {
             font-size: 0.75rem;
             color: #aaa;
             text-transform: uppercase;
             letter-spacing: 1px;
-            margin-bottom: 12px;
+            margin-bottom: 14px;
         }
-
         .ad-card {
             background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            border-radius: 16px;
-            padding: 24px;
+            border-radius: var(--radius-md);
+            padding: 28px;
             color: white;
             text-align: center;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: var(--transition);
             position: relative;
             overflow: hidden;
         }
-
         .ad-card::before {
             content: "";
             position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
             background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
-            animation: shimmer 3s infinite;
+            animation: shimmerRotate 4s linear infinite;
         }
-
-        @keyframes shimmer {
+        @keyframes shimmerRotate {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-
         .ad-card:hover {
             transform: translateY(-4px);
             box-shadow: 0 12px 30px rgba(245,87,108,0.4);
         }
-
-        .ad-card .ad-icon {
-            font-size: 3rem;
-            margin-bottom: 12px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .ad-card .ad-title {
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin-bottom: 8px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .ad-card .ad-desc {
-            font-size: 0.95rem;
-            opacity: 0.9;
-            margin-bottom: 16px;
-            position: relative;
-            z-index: 1;
-        }
-
+        .ad-card > * { position: relative; z-index: 1; }
+        .ad-card .ad-icon { font-size: 3rem; margin-bottom: 12px; }
+        .ad-card .ad-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 8px; }
+        .ad-card .ad-desc { font-size: 0.95rem; opacity: 0.9; margin-bottom: 18px; }
         .ad-card .ad-cta {
             display: inline-block;
             padding: 10px 28px;
@@ -406,217 +675,158 @@
             border-radius: 25px;
             font-weight: 600;
             font-size: 0.9rem;
-            position: relative;
-            z-index: 1;
-            transition: all 0.3s;
+            transition: var(--transition);
         }
-
         .ad-card:hover .ad-cta {
             transform: scale(1.05);
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
-
-        /* 廣告合作入口 */
         .ad-contact {
-            margin-top: 16px;
+            margin-top: 18px;
             padding-top: 16px;
             border-top: 1px solid #eee;
         }
-
         .ad-contact p {
             color: #888;
             font-size: 0.85rem;
         }
-
         .ad-contact a {
-            color: #43a047;
+            color: var(--primary);
             text-decoration: none;
             font-weight: 600;
         }
-
-        .ad-contact a:hover {
-            text-decoration: underline;
-        }
-
-        /* Info Cards */
-        .info-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-
-        .info-card {
-            background: rgba(255,255,255,0.15);
-            backdrop-filter: blur(10px);
-            border-radius: 16px;
-            padding: 20px;
-            color: white;
-            text-align: center;
-        }
-
-        .info-card .icon {
-            font-size: 2rem;
-            margin-bottom: 8px;
-        }
-
-        .info-card .title {
-            font-weight: 600;
-            font-size: 1.1rem;
-        }
-
-        .info-card .desc {
-            font-size: 0.85rem;
-            opacity: 0.8;
-            margin-top: 4px;
-        }
-
-        /* Footer */
+        .ad-contact a:hover { text-decoration: underline; }
         .footer {
             text-align: center;
-            padding: 24px;
-            color: rgba(255,255,255,0.6);
+            padding: 28px;
+            color: rgba(255,255,255,0.65);
             font-size: 0.85rem;
         }
-
-        /* Loading Overlay */
         .loading-overlay {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255,255,255,0.9);
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(255,255,255,0.92);
+            backdrop-filter: blur(8px);
             z-index: 1000;
             justify-content: center;
             align-items: center;
             flex-direction: column;
         }
-
-        .loading-overlay.active {
-            display: flex;
+        .loading-overlay.active { display: flex; }
+        .spinner-ring {
+            width: 56px; height: 56px;
+            position: relative;
         }
-
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid #e8e8e8;
-            border-top-color: #43a047;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 16px;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Responsive */
-        @media (max-width: 600px) {
-            .header h1 {
-                font-size: 1.8rem;
-            }
-            .form-card {
-                padding: 20px;
-            }
-            .radio-group {
-                flex-direction: column;
-            }
-            .radio-option {
-                min-width: auto;
-            }
-        }
-    </style>
-
-    <!-- Language Switcher Styles -->
-    <style>
-        .lang-switcher {
-            display: flex;
-            gap: 3px;
-            background: #f1f8e9;
-            padding: 3px 5px;
-            border-radius: 15px;
-            border: 1px solid #c8e6c9;
-            font-size: 0.7rem;
+        .spinner-ring div {
             position: absolute;
-            top: 16px;
-            right: 16px;
-            z-index: 10;
+            width: 100%; height: 100%;
+            border: 4px solid transparent;
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spinRing 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
         }
-        .lang-btn {
-            padding: 3px 8px;
-            border: 1px solid transparent;
-            border-radius: 12px;
-            background: transparent;
-            color: #43a047;
+        .spinner-ring div:nth-child(1) { animation-delay: -0.45s; }
+        .spinner-ring div:nth-child(2) { animation-delay: -0.3s; }
+        .spinner-ring div:nth-child(3) { animation-delay: -0.15s; }
+        @keyframes spinRing {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .loading-text {
+            color: var(--primary);
             font-weight: 600;
-            font-size: 0.7rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-family: inherit;
-            line-height: 1.2;
+            margin-top: 16px;
+            font-size: 1rem;
         }
-        .lang-btn:hover {
-            background: rgba(67,160,71,0.15);
+        #confettiCanvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 999;
         }
-        .lang-btn.active {
-            background: #43a047;
-            color: white;
-            border-color: #43a047;
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        @media (max-width: 600px) {
-            .lang-switcher {
-                top: 12px;
-                right: 12px;
-                padding: 2px 4px;
-            }
-            .lang-btn {
-                padding: 2px 6px;
-                font-size: 0.65rem;
-            }
+        @media (max-width: 640px) {
+            .header h1 { font-size: 2rem; }
+            .header p { font-size: 0.95rem; }
+            .form-card { padding: 24px 20px; }
+            .info-cards { grid-template-columns: 1fr; }
+            .radio-group { flex-direction: column; }
+            .radio-option { min-width: auto; }
+            .checkbox-group { grid-template-columns: 1fr 1fr; }
+            .lang-switcher { top: 12px; right: 12px; }
+            .star-rating { font-size: 2rem; gap: 6px; }
+        }
+        @media (max-width: 400px) {
+            .checkbox-group { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
+    <canvas id="particleCanvas"></canvas>
+    <canvas id="confettiCanvas"></canvas>
     <div class="loading-overlay" id="loadingOverlay">
-        <div class="spinner"></div>
-        <p style="color: #43a047; font-weight: 600;">提交中...</p>
+        <div class="spinner-ring"><div></div><div></div><div></div><div></div></div>
+        <p class="loading-text" id="loadingText">提交中...</p>
     </div>
-
     <div class="container">
-        <!-- Header -->
         <div class="header">
             <h1>🥬 素食問卷調查</h1>
-            <p>感謝您的填寫，您的意見對素食世界的貢獻非常重要</p>
+            <p id="subtitle"><span id="typewriter"></span><span class="typing-cursor"></span></p>
         </div>
-
-        <!-- Form Card -->
-        <div class="form-card" style="position: relative;">
-            <!-- Language Switcher -->
+        <div class="info-cards">
+            <div class="info-card" data-delay="0">
+                <span class="icon">🔒</span>
+                <div class="title" data-key="info1Title">資料安全</div>
+                <div class="desc" data-key="info1Desc">您的資料將受到妥善保護</div>
+            </div>
+            <div class="info-card" data-delay="100">
+                <span class="icon">📊</span>
+                <div class="title" data-key="info2Title">瀏覽總數</div>
+                <div class="desc" id="viewCount">0 次瀏覽</div>
+            </div>
+            <div class="info-card" data-delay="200">
+                <span class="icon">⚡</span>
+                <div class="title" data-key="info3Title">快速提交</div>
+                <div class="desc" data-key="info3Desc">只需幾分鐘即可完成</div>
+            </div>
+        </div>
+        <div class="form-card" id="formCard">
             <div class="lang-switcher">
                 <button class="lang-btn active" onclick="switchLang('zh-TW')" data-lang="zh-TW" type="button">繁</button>
                 <button class="lang-btn" onclick="switchLang('zh-CN')" data-lang="zh-CN" type="button">简</button>
                 <button class="lang-btn" onclick="switchLang('en')" data-lang="en" type="button">EN</button>
             </div>
+            <div class="autosave-indicator" id="autosaveIndicator">
+                <span class="save-dot"></span>
+                <span id="autosaveText">已自動保存</span>
+            </div>
             <form id="surveyForm">
-
-                <!-- Question 1: Name -->
-                <div class="question">
+                <div class="progress-container">
+                    <div class="progress-header">
+                        <span class="progress-label" id="progressLabel">填寫進度</span>
+                        <span class="progress-percent" id="progressPercent">0%</span>
+                    </div>
+                    <div class="progress-bar-bg">
+                        <div class="progress-bar-fill" id="progressBar"></div>
+                    </div>
+                </div>
+                <div class="question" data-required="true">
                     <label>1. 您的暱稱 <span class="required">*</span></label>
-                    <input type="text" name="name" required placeholder="請輸入您的暱稱">
+                    <input type="text" name="name" required placeholder="請輸入您的暱稱" data-track>
                 </div>
-
-                <!-- Question 2: Email -->
-                <div class="question">
+                <div class="question" data-required="true">
                     <label>2. 電子郵件 <span class="required">*</span></label>
-                    <input type="email" name="email" required placeholder="example@email.com">
+                    <input type="email" name="email" required placeholder="example@email.com" data-track>
                 </div>
-
-                <!-- Question 3: Age -->
                 <div class="question">
                     <label>3. 您的年齡層</label>
-                    <select name="age">
+                    <select name="age" data-track>
                         <option value="">請選擇...</option>
                         <option value="18以下">18 歲以下</option>
                         <option value="18-25">18 - 25 歲</option>
@@ -626,261 +836,442 @@
                         <option value="55以上">55 歲以上</option>
                     </select>
                 </div>
-
-                <!-- Question 4: Satisfaction -->
-                <div class="question">
+                <div class="question" data-required="true">
                     <label>4. 您喜歡素食的程度 <span class="required">*</span></label>
                     <div class="radio-group">
                         <label class="radio-option">
-                            <input type="radio" name="satisfaction" value="非常滿意" required>
+                            <input type="radio" name="satisfaction" value="非常滿意" required data-track>
                             <span>😊 非常喜歡</span>
                         </label>
                         <label class="radio-option">
-                            <input type="radio" name="satisfaction" value="滿意">
+                            <input type="radio" name="satisfaction" value="滿意" data-track>
                             <span>🙂 喜歡</span>
                         </label>
                         <label class="radio-option">
-                            <input type="radio" name="satisfaction" value="普通">
+                            <input type="radio" name="satisfaction" value="普通" data-track>
                             <span>😐 還好</span>
                         </label>
                         <label class="radio-option">
-                            <input type="radio" name="satisfaction" value="不滿意">
+                            <input type="radio" name="satisfaction" value="不滿意" data-track>
                             <span>😕 不喜歡</span>
                         </label>
                     </div>
                 </div>
-
-                <!-- Question 5: Interests -->
                 <div class="question">
                     <label>5. 您感興趣的素食產品（可複選）</label>
                     <div class="checkbox-group">
                         <label class="checkbox-option">
-                            <input type="checkbox" name="interests" value="素食沙拉">
+                            <input type="checkbox" name="interests" value="素食沙拉" data-track>
                             <div class="check-icon"></div>
                             <span>🥗 素食沙拉</span>
                         </label>
                         <label class="checkbox-option">
-                            <input type="checkbox" name="interests" value="植物肉漢堡">
+                            <input type="checkbox" name="interests" value="植物肉漢堡" data-track>
                             <div class="check-icon"></div>
                             <span>🍔 植物肉漢堡</span>
                         </label>
                         <label class="checkbox-option">
-                            <input type="checkbox" name="interests" value="植物奶">
+                            <input type="checkbox" name="interests" value="植物奶" data-track>
                             <div class="check-icon"></div>
                             <span>🥛 植物奶</span>
                         </label>
                         <label class="checkbox-option">
-                            <input type="checkbox" name="interests" value="素食甜點">
+                            <input type="checkbox" name="interests" value="素食甜點" data-track>
                             <div class="check-icon"></div>
                             <span>🍰 素食甜點</span>
                         </label>
                         <label class="checkbox-option">
-                            <input type="checkbox" name="interests" value="素食起司">
+                            <input type="checkbox" name="interests" value="素食起司" data-track>
                             <div class="check-icon"></div>
                             <span>🧀 素食起司</span>
                         </label>
                         <label class="checkbox-option">
-                            <input type="checkbox" name="interests" value="素食即食麵">
+                            <input type="checkbox" name="interests" value="素食即食麵" data-track>
                             <div class="check-icon"></div>
                             <span>🍜 素食即食麵</span>
                         </label>
                         <label class="checkbox-option">
-                            <input type="checkbox" name="interests" value="素食主食">
+                            <input type="checkbox" name="interests" value="素食主食" data-track>
                             <div class="check-icon"></div>
                             <span>🍚 素食主食</span>
                         </label>
                         <label class="checkbox-option">
-                            <input type="checkbox" name="interests" value="素食小炒">
+                            <input type="checkbox" name="interests" value="素食小炒" data-track>
                             <div class="check-icon"></div>
                             <span>🥘 素食小炒</span>
                         </label>
                         <label class="checkbox-option">
-                            <input type="checkbox" name="interests" value="其它素食菜色">
+                            <input type="checkbox" name="interests" value="其它素食菜色" data-track>
                             <div class="check-icon"></div>
                             <span>🥬 其它素食菜色</span>
                         </label>
                         <label class="checkbox-option">
-                            <input type="checkbox" name="interests" value="其他素食產品">
+                            <input type="checkbox" name="interests" value="其他素食產品" data-track>
                             <div class="check-icon"></div>
                             <span>🛒 其他素食產品</span>
                         </label>
                     </div>
                 </div>
-
-
-
-                <!-- Question 7: Star Rating -->
                 <div class="question">
                     <label>6. 其他建議或意見</label>
-                    <textarea name="feedback" rows="4" placeholder="請輸入您的建議..."></textarea>
+                    <div class="hint" id="feedbackHint">您的每一句建議都是我們進步的動力</div>
+                    <textarea name="feedback" rows="4" placeholder="請輸入您的建議..." data-track></textarea>
                 </div>
-                <!-- Question 6: Feedback -->
                 <div class="question">
-                    <label>7. 對此問卷的對此問卷的整體評分</label>
+                    <label>7. 對此問卷的整體評分</label>
                     <div class="star-rating" id="starRating">
-                        <span class="star" data-value="1">☆</span>
-                        <span class="star" data-value="2">☆</span>
-                        <span class="star" data-value="3">☆</span>
-                        <span class="star" data-value="4">☆</span>
-                        <span class="star" data-value="5">☆</span>
+                        <span class="star" data-value="1">⭐</span>
+                        <span class="star" data-value="2">⭐</span>
+                        <span class="star" data-value="3">⭐</span>
+                        <span class="star" data-value="4">⭐</span>
+                        <span class="star" data-value="5">⭐</span>
                     </div>
                     <input type="hidden" name="rating" id="ratingInput" value="0">
                     <p class="rating-text" id="ratingText">請點擊星星評分</p>
                 </div>
-
-                <!-- Submit -->
-                <button type="submit" class="submit-btn" id="submitBtn">✅ 提交問卷</button>
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    <span class="btn-text">✅ 提交問卷</span>
+                    <span class="btn-loader">
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                    </span>
+                </button>
             </form>
-
-            <!-- ====== Google AdSense 廣告位置（表單下方） ====== -->
-            <div class="adsense-section">
+            <div class="adsense-section" id="adsenseSection">
                 <div class="adsense-label">贊助內容</div>
-                <!-- AdSense 廣告單元 -->
                 <ins class="adsbygoogle"
                      style="display:block"
                      data-ad-client="ca-pub-3064213292741436"
                      data-ad-slot="2729935227"
                      data-ad-format="auto"
                      data-full-width-responsive="true"></ins>
-                <script>
-                     (adsbygoogle = window.adsbygoogle || []).push({});
-                </script>
+                <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
             </div>
-
-            <!-- Success Message -->
             <div class="success-msg" id="successMsg">
                 <div class="emoji">🎉</div>
                 <h3>提交成功！</h3>
                 <p>感謝您完成問卷，您的意見對我們非常重要。</p>
                 <button class="reset-btn" onclick="resetForm()">再填一份</button>
-
-                <!-- ====== 手動廣告區塊（提交成功後顯示） ====== -->
                 <div class="ad-section" id="adSection1">
                     <div class="ad-label">贊助內容</div>
-                    <div class="ad-card" onclick="alert('廣告位開放中，敬請期待！')">
+                    <div class="ad-card" onclick="window.open('https://ink-fortune-ai.lovable.app/', '_blank')">
                         <div class="ad-icon">🎁</div>
                         <div class="ad-title">限時優惠 8 折</div>
                         <div class="ad-desc">即日起至月底，全館商品享 8 折優惠</div>
                         <div class="ad-cta">馬上搶購 →</div>
                     </div>
-                    <!-- 廣告合作入口 -->
                     <div class="ad-contact">
                         <p>💼 想在這裡刊登廣告？ <a href="mailto:freeganism-world@gmail.com?subject=廣告合作詢問">聯絡我們</a></p>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- Info Cards -->
-        <div class="info-cards">
-            <div class="info-card">
-                <div class="icon">🔒</div>
-                <div class="title">資料安全</div>
-                <div class="desc">您的資料將受到妥善保護</div>
-            </div>
-            <div class="info-card">
-                <div class="icon">📊</div>
-                <div class="title">瀏覽總數</div>
-                <div class="desc" id="viewCount">0 次瀏覽</div>
-            </div>
-            <div class="info-card">
-                <div class="icon">⚡</div>
-                <div class="title">快速提交</div>
-                <div class="desc">只需幾分鐘即可完成</div>
-            </div>
-        </div>
-
-        <div class="footer">
+        <div class="footer" id="footerText">
             © 2026 素食問卷調查系統 | 感謝您的參與
         </div>
     </div>
-
     <script>
-        // ============================================
-        // 設定區域 - 請修改以下內容
-        // ============================================
-
-        // Google Apps Script 網址
         const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyr5LI9BBWz2CeGaBwsEQ96-3LizS03e_Yc-WJ9Z7hkHx_hn5aqW6RS82CXlnsYyRXF/exec';
-
-        // 手動廣告連結（修改成你要的網址）
         const AD_LINK = 'https://ink-fortune-ai.lovable.app/';
+        const STORAGE_KEY = 'veganSurveyData';
+        const LANG_KEY = 'veganSurveyLang';
 
-        // ============================================
-        // 星星評分功能
-        // ============================================
+        // ===== 粒子背景 =====
+        (function initParticles() {
+            const canvas = document.getElementById('particleCanvas');
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            let w, h;
+            function resize() {
+                w = canvas.width = window.innerWidth;
+                h = canvas.height = window.innerHeight;
+            }
+            resize();
+            window.addEventListener('resize', resize);
+            class Particle {
+                constructor() { this.reset(); }
+                reset() {
+                    this.x = Math.random() * w;
+                    this.y = Math.random() * h;
+                    this.vx = (Math.random() - 0.5) * 0.4;
+                    this.vy = (Math.random() - 0.5) * 0.4;
+                    this.size = Math.random() * 3 + 1;
+                    this.alpha = Math.random() * 0.3 + 0.1;
+                    this.life = Math.random() * 100 + 100;
+                }
+                update() {
+                    this.x += this.vx;
+                    this.y += this.vy;
+                    this.life--;
+                    if (this.life <= 0 || this.x < 0 || this.x > w || this.y < 0 || this.y > h) this.reset();
+                }
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(255,255,255,${this.alpha})`;
+                    ctx.fill();
+                }
+            }
+            for (let i = 0; i < 50; i++) particles.push(new Particle());
+            function animate() {
+                ctx.clearRect(0, 0, w, h);
+                particles.forEach(p => { p.update(); p.draw(); });
+                for (let i = 0; i < particles.length; i++) {
+                    for (let j = i + 1; j < particles.length; j++) {
+                        const dx = particles[i].x - particles[j].x;
+                        const dy = particles[i].y - particles[j].y;
+                        const dist = Math.sqrt(dx*dx + dy*dy);
+                        if (dist < 120) {
+                            ctx.beginPath();
+                            ctx.moveTo(particles[i].x, particles[i].y);
+                            ctx.lineTo(particles[j].x, particles[j].y);
+                            ctx.strokeStyle = `rgba(255,255,255,${0.08*(1-dist/120)})`;
+                            ctx.lineWidth = 0.5;
+                            ctx.stroke();
+                        }
+                    }
+                }
+                requestAnimationFrame(animate);
+            }
+            animate();
+        })();
+
+        // ===== Confetti =====
+        const confettiCanvas = document.getElementById('confettiCanvas');
+        const confettiCtx = confettiCanvas.getContext('2d');
+        let confettiPieces = [];
+        let confettiActive = false;
+        function resizeConfetti() {
+            confettiCanvas.width = window.innerWidth;
+            confettiCanvas.height = window.innerHeight;
+        }
+        resizeConfetti();
+        window.addEventListener('resize', resizeConfetti);
+        function fireConfetti() {
+            confettiPieces = [];
+            const colors = ['#43a047','#66bb6a','#ff9800','#f5576c','#f093fb','#4fc3f7','#ffd54f'];
+            for (let i = 0; i < 150; i++) {
+                confettiPieces.push({
+                    x: window.innerWidth/2, y: window.innerHeight/2,
+                    vx: (Math.random()-0.5)*20, vy: (Math.random()-1)*20-5,
+                    size: Math.random()*8+4, color: colors[Math.floor(Math.random()*colors.length)],
+                    rotation: Math.random()*360, rotationSpeed: (Math.random()-0.5)*10,
+                    gravity: 0.3+Math.random()*0.3, drag: 0.96
+                });
+            }
+            confettiActive = true;
+            animateConfetti();
+        }
+        function animateConfetti() {
+            if (!confettiActive) return;
+            confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+            let alive = false;
+            confettiPieces.forEach(p => {
+                p.x += p.vx; p.y += p.vy;
+                p.vy += p.gravity; p.vx *= p.drag; p.vy *= p.drag;
+                p.rotation += p.rotationSpeed;
+                if (p.y < confettiCanvas.height+20) alive = true;
+                confettiCtx.save();
+                confettiCtx.translate(p.x, p.y);
+                confettiCtx.rotate(p.rotation*Math.PI/180);
+                confettiCtx.fillStyle = p.color;
+                confettiCtx.fillRect(-p.size/2, -p.size/2, p.size, p.size);
+                confettiCtx.restore();
+            });
+            if (alive) requestAnimationFrame(animateConfetti);
+            else { confettiActive = false; confettiCtx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height); }
+        }
+
+        // ===== 打字機效果 =====
+        const typewriterTexts = {
+            'zh-TW': '感謝您的填寫，您的意見對素食世界的貢獻非常重要',
+            'zh-CN': '感谢您的填写，您的意见对素食世界的贡献非常重要',
+            'en': 'Thank you for your participation. Your feedback matters to the vegan community.'
+        };
+        let typewriterIndex = 0;
+        let currentTypeText = typewriterTexts['zh-TW'];
+        let typewriterTimeout;
+        function typeWriter(text) {
+            currentTypeText = text;
+            typewriterIndex = 0;
+            const el = document.getElementById('typewriter');
+            el.textContent = '';
+            clearTimeout(typewriterTimeout);
+            function type() {
+                if (typewriterIndex < text.length) {
+                    el.textContent += text.charAt(typewriterIndex);
+                    typewriterIndex++;
+                    typewriterTimeout = setTimeout(type, 40);
+                }
+            }
+            type();
+        }
+
+        // ===== 星星評分 =====
         let currentRating = 0;
         const stars = document.querySelectorAll('.star');
         const ratingInput = document.getElementById('ratingInput');
         const ratingText = document.getElementById('ratingText');
-        const ratingLabels = ['', '⭐ 非常不滿意', '⭐⭐ 不滿意', '⭐⭐⭐ 普通', '⭐⭐⭐⭐ 滿意', '⭐⭐⭐⭐⭐ 非常滿意'];
-
+        const ratingLabels = {
+            'zh-TW': ['','⭐ 非常不滿意','⭐⭐ 不滿意','⭐⭐⭐ 普通','⭐⭐⭐⭐ 滿意','⭐⭐⭐⭐⭐ 非常滿意'],
+            'zh-CN': ['','⭐ 非常不满意','⭐⭐ 不满意','⭐⭐⭐ 一般','⭐⭐⭐⭐ 满意','⭐⭐⭐⭐⭐ 非常满意'],
+            'en': ['','⭐ Very Dissatisfied','⭐⭐ Dissatisfied','⭐⭐⭐ Neutral','⭐⭐⭐⭐ Satisfied','⭐⭐⭐⭐⭐ Very Satisfied']
+        };
+        function getRatingLabel(val) { return ratingLabels[currentLang][val] || ''; }
         stars.forEach(star => {
             star.addEventListener('click', function() {
                 currentRating = parseInt(this.dataset.value);
                 ratingInput.value = currentRating;
-                ratingText.textContent = ratingLabels[currentRating];
+                ratingText.textContent = getRatingLabel(currentRating);
                 ratingText.style.color = '#43a047';
                 updateStars();
+                updateProgress();
+                triggerAutosave();
             });
-
             star.addEventListener('mouseenter', function() {
                 const hoverValue = parseInt(this.dataset.value);
                 stars.forEach((s, i) => {
-                    if (i < hoverValue) {
-                        s.textContent = '⭐';
-                        s.classList.add('active');
-                    } else {
-                        s.textContent = '☆';
-                        s.classList.remove('active');
-                    }
+                    s.style.filter = i < hoverValue ? 'grayscale(0)' : 'grayscale(1)';
+                    s.style.opacity = i < hoverValue ? '1' : '0.3';
                 });
             });
         });
-
         document.getElementById('starRating').addEventListener('mouseleave', updateStars);
-
         function updateStars() {
             stars.forEach((star, i) => {
                 if (i < currentRating) {
-                    star.textContent = '⭐';
-                    star.classList.add('active');
+                    star.style.filter = 'grayscale(0)'; star.style.opacity = '1'; star.classList.add('active');
                 } else {
-                    star.textContent = '☆';
-                    star.classList.remove('active');
+                    star.style.filter = 'grayscale(1)'; star.style.opacity = '0.3'; star.classList.remove('active');
                 }
             });
         }
 
-        // ============================================
-        // 單選按鈕樣式
-        // ============================================
+        // ===== 單選 / 多選 =====
         document.querySelectorAll('input[type="radio"]').forEach(radio => {
             radio.addEventListener('change', function() {
                 document.querySelectorAll('.radio-option').forEach(opt => opt.classList.remove('selected'));
                 this.closest('.radio-option').classList.add('selected');
+                updateProgress(); triggerAutosave();
             });
         });
-
-        // ============================================
-        // 多選框樣式
-        // ============================================
         document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
             checkbox.addEventListener('change', function() {
                 this.closest('.checkbox-option').classList.toggle('selected', this.checked);
+                updateProgress(); triggerAutosave();
             });
         });
 
-        // ============================================
-        // 表單提交
-        // ============================================
+        // ===== 進度條 =====
+        function updateProgress() {
+            const questions = document.querySelectorAll('.question');
+            let filled = 0;
+            questions.forEach(q => {
+                const inputs = q.querySelectorAll('input, select, textarea');
+                let hasValue = false;
+                inputs.forEach(inp => {
+                    if (inp.type === 'radio' || inp.type === 'checkbox') { if (inp.checked) hasValue = true; }
+                    else if (inp.value.trim()) hasValue = true;
+                });
+                if (q.querySelector('#starRating') && currentRating > 0) hasValue = true;
+                if (hasValue) filled++;
+            });
+            const percent = Math.round((filled / questions.length) * 100);
+            document.getElementById('progressBar').style.width = percent + '%';
+            document.getElementById('progressPercent').textContent = percent + '%';
+        }
+        document.querySelectorAll('input[data-track], select[data-track], textarea[data-track]').forEach(el => {
+            el.addEventListener('input', () => { updateProgress(); triggerAutosave(); });
+            el.addEventListener('change', () => { updateProgress(); triggerAutosave(); });
+        });
+
+        // ===== 自動保存 =====
+        let autosaveTimer;
+        function triggerAutosave() {
+            const indicator = document.getElementById('autosaveIndicator');
+            indicator.classList.add('visible');
+            clearTimeout(autosaveTimer);
+            autosaveTimer = setTimeout(() => {
+                saveFormData();
+                setTimeout(() => indicator.classList.remove('visible'), 1500);
+            }, 800);
+        }
+        function saveFormData() {
+            const data = {};
+            const form = document.getElementById('surveyForm');
+            const formData = new FormData(form);
+            formData.forEach((val, key) => {
+                if (data[key]) {
+                    if (Array.isArray(data[key])) data[key].push(val);
+                    else data[key] = [data[key], val];
+                } else data[key] = val;
+            });
+            data.rating = currentRating;
+            data.lang = currentLang;
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        }
+        function loadFormData() {
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (!saved) return;
+                const data = JSON.parse(saved);
+                if (data.lang) switchLang(data.lang);
+                const form = document.getElementById('surveyForm');
+                Object.keys(data).forEach(key => {
+                    if (key === 'rating') {
+                        currentRating = parseInt(data[key]) || 0;
+                        if (currentRating > 0) {
+                            ratingInput.value = currentRating;
+                            ratingText.textContent = getRatingLabel(currentRating);
+                            ratingText.style.color = '#43a047';
+                            updateStars();
+                        }
+                    } else if (key !== 'lang') {
+                        const els = form.querySelectorAll(`[name="${key}"]`);
+                        if (els.length > 1) {
+                            const vals = Array.isArray(data[key]) ? data[key] : [data[key]];
+                            els.forEach(el => {
+                                if (vals.includes(el.value)) {
+                                    el.checked = true;
+                                    el.closest('.checkbox-option')?.classList.add('selected');
+                                }
+                            });
+                        } else if (els.length === 1) {
+                            const el = els[0];
+                            if (el.type === 'radio') {
+                                if (el.value === data[key]) {
+                                    el.checked = true;
+                                    el.closest('.radio-option')?.classList.add('selected');
+                                }
+                            } else el.value = data[key];
+                        }
+                    }
+                });
+                updateProgress();
+            } catch (e) { console.log('Load form error:', e); }
+        }
+
+        // ===== 表單提交 =====
         document.getElementById('surveyForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-
+            let hasError = false;
+            document.querySelectorAll('.question[data-required="true"]').forEach(q => {
+                const inputs = q.querySelectorAll('input, select');
+                let valid = false;
+                inputs.forEach(inp => {
+                    if (inp.type === 'radio') { if (inp.checked) valid = true; }
+                    else if (inp.value.trim()) valid = true;
+                });
+                if (!valid) {
+                    hasError = true;
+                    inputs.forEach(inp => inp.classList.add('error'));
+                    setTimeout(() => inputs.forEach(inp => inp.classList.remove('error')), 600);
+                }
+            });
+            if (hasError) return;
             const submitBtn = document.getElementById('submitBtn');
             const loadingOverlay = document.getElementById('loadingOverlay');
-
-            // 收集表單資料
             const formData = new FormData(this);
             const data = {
                 name: formData.get('name'),
@@ -892,251 +1283,205 @@
                 feedback: formData.get('feedback') || '未填寫',
                 timestamp: new Date().toLocaleString('zh-TW')
             };
-
-            // 顯示載入中
-            loadingOverlay.classList.add('active');
+            submitBtn.classList.add('loading');
             submitBtn.disabled = true;
-
+            loadingOverlay.classList.add('active');
             try {
-                // 發送資料到 Google 試算表
                 await fetch(GOOGLE_SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    method: 'POST', mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
                 });
-
-                // 成功處理
                 loadingOverlay.classList.remove('active');
                 document.getElementById('surveyForm').style.display = 'none';
-                document.querySelector('.adsense-section').style.display = 'none';
+                document.getElementById('adsenseSection').style.display = 'none';
+                document.querySelector('.progress-container').style.display = 'none';
                 document.getElementById('successMsg').style.display = 'block';
-
-                // ====== 顯示手動廣告區塊 ======
                 document.getElementById('adSection1').style.display = 'block';
-
+                localStorage.removeItem(STORAGE_KEY);
+                fireConfetti();
             } catch (error) {
                 console.error('提交失敗:', error);
                 loadingOverlay.classList.remove('active');
+                submitBtn.classList.remove('loading');
                 submitBtn.disabled = false;
-                alert('提交失敗，請稍後再試。');
+                alert(translations[currentLang].submitError || '提交失敗，請稍後再試。');
             }
         });
 
-        // ============================================
-        // 重置表單
-        // ============================================
+        // ===== 重置表單 =====
         function resetForm() {
             document.getElementById('surveyForm').reset();
             document.getElementById('surveyForm').style.display = 'block';
-            document.querySelector('.adsense-section').style.display = 'block';
+            document.getElementById('adsenseSection').style.display = 'block';
+            document.querySelector('.progress-container').style.display = 'block';
             document.getElementById('successMsg').style.display = 'none';
-            document.getElementById('submitBtn').disabled = false;
-
-            // 隱藏手動廣告
             document.getElementById('adSection1').style.display = 'none';
-
-            // 重置星星
+            document.getElementById('submitBtn').classList.remove('loading');
+            document.getElementById('submitBtn').disabled = false;
             currentRating = 0;
             ratingInput.value = '0';
-            ratingText.textContent = '請點擊星星評分';
+            ratingText.textContent = translations[currentLang].ratingText;
             ratingText.style.color = '#888';
             updateStars();
-
-            // 重置樣式
             document.querySelectorAll('.radio-option').forEach(opt => opt.classList.remove('selected'));
             document.querySelectorAll('.checkbox-option').forEach(opt => opt.classList.remove('selected'));
+            document.querySelectorAll('input.error').forEach(el => el.classList.remove('error'));
+            updateProgress();
+            localStorage.removeItem(STORAGE_KEY);
         }
-    
-        // ============================================
-        // 瀏覽計數功能（使用 localStorage）
-        // ============================================
+
+        // ===== 瀏覽計數 =====
         function updateViewCount() {
             try {
-                // 使用 localStorage 計數
-                let localCount = parseInt(localStorage.getItem('surveyViewCount') || '0');
-                localCount++;
-                localStorage.setItem('surveyViewCount', localCount.toString());
-                var viewCountEl = document.getElementById('viewCount');
-                if (viewCountEl) {
-                    viewCountEl.textContent = localCount.toLocaleString('zh-TW') + ' 次瀏覽';
+                let count = parseInt(localStorage.getItem('surveyViewCount') || '128');
+                const lastVisit = localStorage.getItem('surveyLastVisit');
+                const now = Date.now();
+                const oneHour = 3600000;
+                if (!lastVisit || (now - parseInt(lastVisit)) > oneHour) {
+                    count++;
+                    localStorage.setItem('surveyViewCount', count.toString());
+                    localStorage.setItem('surveyLastVisit', now.toString());
+                }
+                const el = document.getElementById('viewCount');
+                if (el) {
+                    animateNumber(el, 0, count, 1000);
                 }
             } catch (e) {
                 console.log('View count error:', e);
-                var viewCountEl = document.getElementById('viewCount');
-                if (viewCountEl) {
-                    viewCountEl.textContent = '統計中...';
-                }
             }
         }
-
-        // 頁面載入時更新計數（延遲執行確保 DOM 已載入）
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', updateViewCount);
-        } else {
-            updateViewCount();
+        function animateNumber(el, start, end, duration) {
+            const startTime = performance.now();
+            function update(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const easeOut = 1 - Math.pow(1 - progress, 3);
+                const current = Math.floor(start + (end - start) * easeOut);
+                el.textContent = current.toLocaleString('zh-TW') + ' 次瀏覽';
+                if (progress < 1) requestAnimationFrame(update);
+            }
+            requestAnimationFrame(update);
         }
-    
-        // ============================================
-        // 語言切換功能
-        // ============================================
+
+        // ===== 滾動顯現動畫 =====
+        function initScrollReveal() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const delay = entry.target.dataset.delay || 0;
+                        setTimeout(() => entry.target.classList.add('visible'), parseInt(delay));
+                    }
+                });
+            }, { threshold: 0.1 });
+            document.querySelectorAll('.info-card, .form-card, .question').forEach(el => observer.observe(el));
+        }
+
+        // ===== 語言切換 =====
         const translations = {
             'zh-TW': {
                 title: '🥬 素食問卷調查',
                 subtitle: '感謝您的填寫，您的意見對素食世界的貢獻非常重要',
-                q1: '1. 您的暱稱',
-                q1Placeholder: '請輸入您的暱稱',
-                q2: '2. 電子郵件',
-                q2Placeholder: 'example@email.com',
-                q3: '3. 您的年齡層',
-                q3Select: '請選擇...',
-                age18: '18 歲以下',
-                age1825: '18 - 25 歲',
-                age2635: '26 - 35 歲',
-                age3645: '36 - 45 歲',
-                age4655: '46 - 55 歲',
-                age55: '55 歲以上',
+                q1: '1. 您的暱稱', q1Placeholder: '請輸入您的暱稱',
+                q2: '2. 電子郵件', q2Placeholder: 'example@email.com',
+                q3: '3. 您的年齡層', q3Select: '請選擇...',
+                age18: '18 歲以下', age1825: '18 - 25 歲', age2635: '26 - 35 歲',
+                age3645: '36 - 45 歲', age4655: '46 - 55 歲', age55: '55 歲以上',
                 q4: '4. 您喜歡素食的程度',
-                veryLike: '😊 非常喜歡',
-                like: '🙂 喜歡',
-                normal: '😐 還好',
-                dislike: '😕 不喜歡',
+                veryLike: '😊 非常喜歡', like: '🙂 喜歡', normal: '😐 還好', dislike: '😕 不喜歡',
                 q5: '5. 您感興趣的素食產品（可複選）',
-                q6: '6. 其他建議或意見',
-                q6Placeholder: '請輸入您的建議...',
+                q6: '6. 其他建議或意見', q6Placeholder: '請輸入您的建議...',
                 q7: '7. 對此問卷的整體評分',
                 ratingText: '請點擊星星評分',
                 submit: '✅ 提交問卷',
                 successTitle: '🎉 提交成功！',
                 successMsg: '感謝您完成問卷，您的意見對素食世界的貢獻非常重要。',
                 reset: '再填一份',
-                adLabel: '贊助內容',
-                adTitle: '限時優惠 8 折',
-                adDesc: '即日起至月底，全館商品享 8 折優惠',
-                adCta: '馬上搶購 →',
-                adContact: '💼 想在這裡刊登廣告？',
-                adContactLink: '聯絡我們',
-                info1Title: '資料安全',
-                info1Desc: '您的資料將受到妥善保護',
+                adLabel: '贊助內容', adTitle: '限時優惠 8 折',
+                adDesc: '即日起至月底，全館商品享 8 折優惠', adCta: '馬上搶購 →',
+                adContact: '💼 想在這裡刊登廣告？', adContactLink: '聯絡我們',
+                info1Title: '資料安全', info1Desc: '您的資料將受到妥善保護',
                 info2Title: '瀏覽總數',
-                info3Title: '快速提交',
-                info3Desc: '只需幾分鐘即可完成',
-                footer: '© 2026 問卷調查系統 | 感謝您的參與',
-                loading: '提交中...'
+                info3Title: '快速提交', info3Desc: '只需幾分鐘即可完成',
+                footer: '© 2026 素食問卷調查系統 | 感謝您的參與',
+                loading: '提交中...', progressLabel: '填寫進度',
+                submitError: '提交失敗，請稍後再試。',
+                autosave: '已自動保存', feedbackHint: '您的每一句建議都是我們進步的動力'
             },
             'zh-CN': {
                 title: '🥬 素食问卷调查',
                 subtitle: '感谢您的填写，您的意见对素食世界的贡献非常重要',
-                q1: '1. 您的昵称',
-                q1Placeholder: '请输入您的昵称',
-                q2: '2. 电子邮箱',
-                q2Placeholder: 'example@email.com',
-                q3: '3. 您的年龄段',
-                q3Select: '请选择...',
-                age18: '18 岁以下',
-                age1825: '18 - 25 岁',
-                age2635: '26 - 35 岁',
-                age3645: '36 - 45 岁',
-                age4655: '46 - 55 岁',
-                age55: '55 岁以上',
+                q1: '1. 您的昵称', q1Placeholder: '请输入您的昵称',
+                q2: '2. 电子邮箱', q2Placeholder: 'example@email.com',
+                q3: '3. 您的年龄段', q3Select: '请选择...',
+                age18: '18 岁以下', age1825: '18 - 25 岁', age2635: '26 - 35 岁',
+                age3645: '36 - 45 岁', age4655: '46 - 55 岁', age55: '55 岁以上',
                 q4: '4. 您喜欢素食的程度',
-                veryLike: '😊 非常喜欢',
-                like: '🙂 喜欢',
-                normal: '😐 一般',
-                dislike: '😕 不喜欢',
+                veryLike: '😊 非常喜欢', like: '🙂 喜欢', normal: '😐 一般', dislike: '😕 不喜欢',
                 q5: '5. 您感兴趣的素食产品（可多选）',
-                q6: '6. 其他建议或意见',
-                q6Placeholder: '请输入您的建议...',
+                q6: '6. 其他建议或意见', q6Placeholder: '请输入您的建议...',
                 q7: '7. 对本问卷的整体评分',
                 ratingText: '请点击星星评分',
                 submit: '✅ 提交问卷',
                 successTitle: '🎉 提交成功！',
                 successMsg: '感谢您完成问卷，您的意见对素食世界的贡献非常重要。',
                 reset: '再填一份',
-                adLabel: '赞助内容',
-                adTitle: '限时优惠 8 折',
-                adDesc: '即日起至月底，全店商品享 8 折优惠',
-                adCta: '马上抢购 →',
-                adContact: '💼 想在这里刊登广告？',
-                adContactLink: '联系我们',
-                info1Title: '数据安全',
-                info1Desc: '您的数据将受到妥善保护',
+                adLabel: '赞助内容', adTitle: '限时优惠 8 折',
+                adDesc: '即日起至月底，全店商品享 8 折优惠', adCta: '马上抢购 →',
+                adContact: '💼 想在这里刊登广告？', adContactLink: '联系我们',
+                info1Title: '数据安全', info1Desc: '您的数据将受到妥善保护',
                 info2Title: '浏览总数',
-                info3Title: '快速提交',
-                info3Desc: '只需几分钟即可完成',
-                footer: '© 2026 问卷调查系统 | 感谢您的参与',
-                loading: '提交中...'
+                info3Title: '快速提交', info3Desc: '只需几分钟即可完成',
+                footer: '© 2026 素食问卷调查系统 | 感谢您的参与',
+                loading: '提交中...', progressLabel: '填写进度',
+                submitError: '提交失败，请稍后再试。',
+                autosave: '已自动保存', feedbackHint: '您的每一句建议都是我们进步的动力'
             },
             'en': {
                 title: '🥬 Vegan Survey',
-                subtitle: 'Thank you for your participation. Your feedback is important to the vegan community.',
-                q1: '1. Your Nickname',
-                q1Placeholder: 'Enter your nickname',
-                q2: '2. Email',
-                q2Placeholder: 'example@email.com',
-                q3: '3. Your Age Group',
-                q3Select: 'Select...',
-                age18: 'Under 18',
-                age1825: '18 - 25',
-                age2635: '26 - 35',
-                age3645: '36 - 45',
-                age4655: '46 - 55',
-                age55: 'Over 55',
+                subtitle: 'Thank you for your participation. Your feedback matters to the vegan community.',
+                q1: '1. Your Nickname', q1Placeholder: 'Enter your nickname',
+                q2: '2. Email', q2Placeholder: 'example@email.com',
+                q3: '3. Your Age Group', q3Select: 'Select...',
+                age18: 'Under 18', age1825: '18 - 25', age2635: '26 - 35',
+                age3645: '36 - 45', age4655: '46 - 55', age55: 'Over 55',
                 q4: '4. How much do you like vegan food?',
-                veryLike: '😊 Love it',
-                like: '🙂 Like it',
-                normal: '😐 It is okay',
-                dislike: '😕 Not a fan',
+                veryLike: '😊 Love it', like: '🙂 Like it', normal: '😐 It is okay', dislike: '😕 Not a fan',
                 q5: '5. Vegan products you are interested in (Multiple)',
-                q6: '6. Other suggestions or comments',
-                q6Placeholder: 'Enter your suggestions...',
+                q6: '6. Other suggestions or comments', q6Placeholder: 'Enter your suggestions...',
                 q7: '7. Overall rating for this survey',
                 ratingText: 'Click stars to rate',
                 submit: '✅ Submit Survey',
                 successTitle: '🎉 Submission Successful!',
                 successMsg: 'Thank you for completing the survey. Your feedback is valuable to the vegan community.',
                 reset: 'Fill again',
-                adLabel: 'Sponsored',
-                adTitle: 'Limited Time 20% OFF',
-                adDesc: 'Enjoy 20% off all items until end of month',
-                adCta: 'Shop Now →',
-                adContact: '💼 Want to advertise here?',
-                adContactLink: 'Contact Us',
-                info1Title: 'Data Security',
-                info1Desc: 'Your data is securely protected',
+                adLabel: 'Sponsored', adTitle: 'Limited Time 20% OFF',
+                adDesc: 'Enjoy 20% off all items until end of month', adCta: 'Shop Now →',
+                adContact: '💼 Want to advertise here?', adContactLink: 'Contact Us',
+                info1Title: 'Data Security', info1Desc: 'Your data is securely protected',
                 info2Title: 'Total Views',
-                info3Title: 'Quick Submit',
-                info3Desc: 'Complete in just a few minutes',
+                info3Title: 'Quick Submit', info3Desc: 'Complete in just a few minutes',
                 footer: '© 2026 Survey System | Thank you for participating',
-                loading: 'Submitting...'
+                loading: 'Submitting...', progressLabel: 'Progress',
+                submitError: 'Submission failed. Please try again later.',
+                autosave: 'Auto-saved', feedbackHint: 'Every suggestion helps us improve'
             }
         };
-
         let currentLang = 'zh-TW';
-
         function switchLang(lang) {
             currentLang = lang;
+            localStorage.setItem(LANG_KEY, lang);
             const t = translations[lang];
-
-            // Update button active state
             document.querySelectorAll('.lang-btn').forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.lang === lang);
             });
-
-            // Update header
             document.querySelector('.header h1').textContent = t.title;
-            document.querySelector('.header p').textContent = t.subtitle;
-
-            // Update questions
+            typeWriter(t.subtitle);
             const questions = document.querySelectorAll('.question');
             questions[0].querySelector('label').innerHTML = t.q1 + ' <span class="required">*</span>';
             questions[0].querySelector('input').placeholder = t.q1Placeholder;
-
             questions[1].querySelector('label').innerHTML = t.q2 + ' <span class="required">*</span>';
             questions[1].querySelector('input').placeholder = t.q2Placeholder;
-
             questions[2].querySelector('label').textContent = t.q3;
             const select = questions[2].querySelector('select');
             select.options[0].text = t.q3Select;
@@ -1146,51 +1491,56 @@
             select.options[4].text = t.age3645;
             select.options[5].text = t.age4655;
             select.options[6].text = t.age55;
-
             questions[3].querySelector('label').innerHTML = t.q4 + ' <span class="required">*</span>';
             const radioLabels = questions[3].querySelectorAll('.radio-option span');
             radioLabels[0].textContent = t.veryLike;
             radioLabels[1].textContent = t.like;
             radioLabels[2].textContent = t.normal;
             radioLabels[3].textContent = t.dislike;
-
             questions[4].querySelector('label').textContent = t.q5;
-
             questions[5].querySelector('label').textContent = t.q6;
+            questions[5].querySelector('.hint').textContent = t.feedbackHint;
             questions[5].querySelector('textarea').placeholder = t.q6Placeholder;
-
             questions[6].querySelector('label').textContent = t.q7;
-            document.getElementById('ratingText').textContent = t.ratingText;
-
-            // Update submit button
-            document.getElementById('submitBtn').textContent = t.submit;
-
-            // Update success message
+            if (currentRating === 0) document.getElementById('ratingText').textContent = t.ratingText;
+            else document.getElementById('ratingText').textContent = getRatingLabel(currentRating);
+            document.getElementById('submitBtn').querySelector('.btn-text').textContent = t.submit;
             document.querySelector('.success-msg h3').textContent = t.successTitle;
             document.querySelector('.success-msg p').textContent = t.successMsg;
             document.querySelector('.reset-btn').textContent = t.reset;
-
-            // Update ad section
             document.querySelector('.ad-label').textContent = t.adLabel;
             document.querySelector('.ad-title').textContent = t.adTitle;
             document.querySelector('.ad-desc').textContent = t.adDesc;
             document.querySelector('.ad-cta').textContent = t.adCta;
             document.querySelector('.ad-contact p').innerHTML = t.adContact + ' <a href="mailto:freeganism-world@gmail.com?subject=廣告合作詢問">' + t.adContactLink + '</a>';
-
-            // Update info cards
             const infoCards = document.querySelectorAll('.info-card');
             infoCards[0].querySelector('.title').textContent = t.info1Title;
             infoCards[0].querySelector('.desc').textContent = t.info1Desc;
             infoCards[1].querySelector('.title').textContent = t.info2Title;
             infoCards[2].querySelector('.title').textContent = t.info3Title;
             infoCards[2].querySelector('.desc').textContent = t.info3Desc;
-
-            // Update footer
-            document.querySelector('.footer').textContent = t.footer;
-
-            // Update loading text
-            document.querySelector('.loading-overlay p').textContent = t.loading;
+            document.getElementById('footerText').textContent = t.footer;
+            document.getElementById('loadingText').textContent = t.loading;
+            document.getElementById('progressLabel').textContent = t.progressLabel;
+            document.getElementById('autosaveText').textContent = t.autosave;
         }
-</script>
+
+        // ===== 初始化 =====
+        function init() {
+            const savedLang = localStorage.getItem(LANG_KEY) || 'zh-TW';
+            switchLang(savedLang);
+            loadFormData();
+            updateViewCount();
+            initScrollReveal();
+            setTimeout(() => {
+                document.getElementById('formCard').classList.add('visible');
+            }, 200);
+        }
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
+    </script>
 </body>
 </html>
