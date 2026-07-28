@@ -1,10 +1,5 @@
 <!DOCTYPE html>
-    <!-- Language Switcher -->
-    <div class="lang-switcher">
-        <button class="lang-btn active" onclick="switchLang('zh-TW')" data-lang="zh-TW" type="button">繁</button>
-        <button class="lang-btn" onclick="switchLang('zh-CN')" data-lang="zh-CN" type="button">简</button>
-        <button class="lang-btn" onclick="switchLang('en')" data-lang="en" type="button">EN</button>
-    </div>
+
 
 <html lang="zh-TW">
 <head>
@@ -537,10 +532,6 @@
     <!-- Language Switcher Styles -->
     <style>
         .lang-switcher {
-            position: fixed;
-            top: 12px;
-            right: 12px;
-            z-index: 1000;
             display: flex;
             gap: 4px;
             background: rgba(255,255,255,0.95);
@@ -548,6 +539,8 @@
             border-radius: 20px;
             box-shadow: 0 1px 6px rgba(0,0,0,0.15);
             font-size: 0.75rem;
+            margin-bottom: 16px;
+            align-self: flex-start;
         }
         .lang-btn {
             padding: 4px 10px;
@@ -571,11 +564,6 @@
             border-color: #43a047;
         }
         @media (max-width: 600px) {
-            .lang-switcher {
-                top: 8px;
-                right: 8px;
-                padding: 3px 5px;
-            }
             .lang-btn {
                 padding: 3px 8px;
                 font-size: 0.7rem;
@@ -590,6 +578,13 @@
     </div>
 
     <div class="container">
+        <!-- Language Switcher -->
+        <div class="lang-switcher">
+            <button class="lang-btn active" onclick="switchLang('zh-TW')" data-lang="zh-TW" type="button">繁</button>
+            <button class="lang-btn" onclick="switchLang('zh-CN')" data-lang="zh-CN" type="button">简</button>
+            <button class="lang-btn" onclick="switchLang('en')" data-lang="en" type="button">EN</button>
+        </div>
+
         <!-- Header -->
         <div class="header">
             <h1>🥬 素食問卷調查</h1>
@@ -780,7 +775,7 @@
             <div class="info-card">
                 <div class="icon">📊</div>
                 <div class="title">瀏覽總數</div>
-                <div class="desc" id="viewCount">載入中...</div>
+                <div class="desc" id="viewCount">0 次瀏覽</div>
             </div>
             <div class="info-card">
                 <div class="icon">⚡</div>
@@ -953,15 +948,30 @@
         // 瀏覽計數功能（使用 localStorage）
         // ============================================
         function updateViewCount() {
-            // 使用 localStorage 計數
-            let localCount = parseInt(localStorage.getItem('surveyViewCount') || '0');
-            localCount++;
-            localStorage.setItem('surveyViewCount', localCount.toString());
-            document.getElementById('viewCount').textContent = localCount.toLocaleString('zh-TW') + ' 次瀏覽';
+            try {
+                // 使用 localStorage 計數
+                let localCount = parseInt(localStorage.getItem('surveyViewCount') || '0');
+                localCount++;
+                localStorage.setItem('surveyViewCount', localCount.toString());
+                var viewCountEl = document.getElementById('viewCount');
+                if (viewCountEl) {
+                    viewCountEl.textContent = localCount.toLocaleString('zh-TW') + ' 次瀏覽';
+                }
+            } catch (e) {
+                console.log('View count error:', e);
+                var viewCountEl = document.getElementById('viewCount');
+                if (viewCountEl) {
+                    viewCountEl.textContent = '統計中...';
+                }
+            }
         }
 
-        // 頁面載入時更新計數
-        updateViewCount();
+        // 頁面載入時更新計數（延遲執行確保 DOM 已載入）
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', updateViewCount);
+        } else {
+            updateViewCount();
+        }
     
         // ============================================
         // 語言切換功能
@@ -1071,9 +1081,9 @@
                 q4: '4. How much do you like vegan food?',
                 veryLike: '😊 Love it',
                 like: '🙂 Like it',
-                normal: '😐 It's okay',
+                normal: '😐 It is okay',
                 dislike: '😕 Not a fan',
-                q5: '5. Vegan products you're interested in (Multiple)',
+                q5: '5. Vegan products you are interested in (Multiple)',
                 q6: '6. Other suggestions or comments',
                 q6Placeholder: 'Enter your suggestions...',
                 q7: '7. Overall rating for this survey',
