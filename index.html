@@ -955,7 +955,7 @@
                 <button class="reset-btn" onclick="resetForm()">再填一份</button>
                 <div class="ad-section" id="adSection1">
                     <div class="ad-label">贊助內容</div>
-                    <div class="ad-card" onclick="window.open('https://ink-fortune-ai.lovable.app/', '_blank')">
+                    <div class="ad-card" onclick="alert('廣告位開放中，敬請期待！')">
                         <div class="ad-icon">🎁</div>
                         <div class="ad-title">限時優惠 8 折</div>
                         <div class="ad-desc">即日起至月底，全館商品享 8 折優惠</div>
@@ -1358,7 +1358,7 @@
                 const progress = Math.min(elapsed / duration, 1);
                 const easeOut = 1 - Math.pow(1 - progress, 3);
                 const current = Math.floor(start + (end - start) * easeOut);
-                el.textContent = current.toLocaleString('zh-TW') + ' 次瀏覽';
+                el.textContent = current.toLocaleString('zh-TW') + (translations[currentLang].viewCountSuffix || ' 次瀏覽');
                 if (progress < 1) requestAnimationFrame(update);
             }
             requestAnimationFrame(update);
@@ -1406,7 +1406,7 @@
                 footer: '© 2026 素食問卷調查系統 | 感謝您的參與',
                 loading: '提交中...', progressLabel: '填寫進度',
                 submitError: '提交失敗，請稍後再試。',
-                autosave: '已自動保存', feedbackHint: '您的每一句建議都是我們進步的動力'
+                autosave: '已自動保存', feedbackHint: '您的每一句建議都是我們進步的動力', viewCountSuffix: ' 次瀏覽'
             },
             'zh-CN': {
                 title: '🥬 素食问卷调查',
@@ -1435,7 +1435,7 @@
                 footer: '© 2026 素食问卷调查系统 | 感谢您的参与',
                 loading: '提交中...', progressLabel: '填写进度',
                 submitError: '提交失败，请稍后再试。',
-                autosave: '已自动保存', feedbackHint: '您的每一句建议都是我们进步的动力'
+                autosave: '已自动保存', feedbackHint: '您的每一句建议都是我们进步的动力', viewCountSuffix: ' 次浏览'
             },
             'en': {
                 title: '🥬 Vegan Survey',
@@ -1464,7 +1464,7 @@
                 footer: '© 2026 Survey System | Thank you for participating',
                 loading: 'Submitting...', progressLabel: 'Progress',
                 submitError: 'Submission failed. Please try again later.',
-                autosave: 'Auto-saved', feedbackHint: 'Every suggestion helps us improve'
+                autosave: 'Auto-saved', feedbackHint: 'Every suggestion helps us improve', viewCountSuffix: ' views'
             }
         };
         let currentLang = 'zh-TW';
@@ -1519,6 +1519,13 @@
             infoCards[1].querySelector('.title').textContent = t.info2Title;
             infoCards[2].querySelector('.title').textContent = t.info3Title;
             infoCards[2].querySelector('.desc').textContent = t.info3Desc;
+            // Refresh view count with new language suffix
+            const viewCountEl = document.getElementById('viewCount');
+            if (viewCountEl) {
+                const currentCountText = viewCountEl.textContent.replace(/[^0-9]/g, '');
+                const currentCount = parseInt(currentCountText) || 0;
+                viewCountEl.textContent = currentCount.toLocaleString('zh-TW') + t.viewCountSuffix;
+            }
             document.getElementById('footerText').textContent = t.footer;
             document.getElementById('loadingText').textContent = t.loading;
             document.getElementById('progressLabel').textContent = t.progressLabel;
