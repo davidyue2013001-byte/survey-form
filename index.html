@@ -533,30 +533,32 @@
     <style>
         .lang-switcher {
             display: flex;
-            gap: 4px;
-            background: rgba(255,255,255,0.95);
-            padding: 4px 6px;
-            border-radius: 20px;
-            box-shadow: 0 1px 6px rgba(0,0,0,0.15);
-            font-size: 0.75rem;
-            margin-bottom: 16px;
-            align-self: flex-start;
+            gap: 3px;
+            background: #f1f8e9;
+            padding: 3px 5px;
+            border-radius: 15px;
+            border: 1px solid #c8e6c9;
+            font-size: 0.7rem;
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            z-index: 10;
         }
         .lang-btn {
-            padding: 4px 10px;
+            padding: 3px 8px;
             border: 1px solid transparent;
-            border-radius: 15px;
+            border-radius: 12px;
             background: transparent;
             color: #43a047;
             font-weight: 600;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             cursor: pointer;
             transition: all 0.3s;
             font-family: inherit;
             line-height: 1.2;
         }
         .lang-btn:hover {
-            background: rgba(67,160,71,0.1);
+            background: rgba(67,160,71,0.15);
         }
         .lang-btn.active {
             background: #43a047;
@@ -564,9 +566,14 @@
             border-color: #43a047;
         }
         @media (max-width: 600px) {
+            .lang-switcher {
+                top: 12px;
+                right: 12px;
+                padding: 2px 4px;
+            }
             .lang-btn {
-                padding: 3px 8px;
-                font-size: 0.7rem;
+                padding: 2px 6px;
+                font-size: 0.65rem;
             }
         }
     </style>
@@ -578,13 +585,6 @@
     </div>
 
     <div class="container">
-        <!-- Language Switcher -->
-        <div class="lang-switcher">
-            <button class="lang-btn active" onclick="switchLang('zh-TW')" data-lang="zh-TW" type="button">繁</button>
-            <button class="lang-btn" onclick="switchLang('zh-CN')" data-lang="zh-CN" type="button">简</button>
-            <button class="lang-btn" onclick="switchLang('en')" data-lang="en" type="button">EN</button>
-        </div>
-
         <!-- Header -->
         <div class="header">
             <h1>🥬 素食問卷調查</h1>
@@ -592,7 +592,13 @@
         </div>
 
         <!-- Form Card -->
-        <div class="form-card">
+        <div class="form-card" style="position: relative;">
+            <!-- Language Switcher -->
+            <div class="lang-switcher">
+                <button class="lang-btn active" onclick="switchLang('zh-TW')" data-lang="zh-TW" type="button">繁</button>
+                <button class="lang-btn" onclick="switchLang('zh-CN')" data-lang="zh-CN" type="button">简</button>
+                <button class="lang-btn" onclick="switchLang('en')" data-lang="en" type="button">EN</button>
+            </div>
             <form id="surveyForm">
 
                 <!-- Question 1: Name -->
@@ -1025,9 +1031,9 @@
                 subtitle: '感谢您的填写，您的意见对素食世界的贡献非常重要',
                 q1: '1. 您的昵称',
                 q1Placeholder: '请输入您的昵称',
-                q2: '2. 电子邮件',
+                q2: '2. 电子邮箱',
                 q2Placeholder: 'example@email.com',
-                q3: '3. 您的年龄层',
+                q3: '3. 您的年龄段',
                 q3Select: '请选择...',
                 age18: '18 岁以下',
                 age1825: '18 - 25 岁',
@@ -1038,12 +1044,12 @@
                 q4: '4. 您喜欢素食的程度',
                 veryLike: '😊 非常喜欢',
                 like: '🙂 喜欢',
-                normal: '😐 还好',
+                normal: '😐 一般',
                 dislike: '😕 不喜欢',
-                q5: '5. 您感兴趣的素食产品（可复选）',
+                q5: '5. 您感兴趣的素食产品（可多选）',
                 q6: '6. 其他建议或意见',
                 q6Placeholder: '请输入您的建议...',
-                q7: '7. 对此问卷的整体评分',
+                q7: '7. 对本问卷的整体评分',
                 ratingText: '请点击星星评分',
                 submit: '✅ 提交问卷',
                 successTitle: '🎉 提交成功！',
@@ -1051,12 +1057,12 @@
                 reset: '再填一份',
                 adLabel: '赞助内容',
                 adTitle: '限时优惠 8 折',
-                adDesc: '即日起至月底，全馆商品享 8 折优惠',
+                adDesc: '即日起至月底，全店商品享 8 折优惠',
                 adCta: '马上抢购 →',
                 adContact: '💼 想在这里刊登广告？',
                 adContactLink: '联系我们',
-                info1Title: '资料安全',
-                info1Desc: '您的资料将受到妥善保护',
+                info1Title: '数据安全',
+                info1Desc: '您的数据将受到妥善保护',
                 info2Title: '浏览总数',
                 info3Title: '快速提交',
                 info3Desc: '只需几分钟即可完成',
