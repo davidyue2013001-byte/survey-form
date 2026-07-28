@@ -1,4 +1,11 @@
 <!DOCTYPE html>
+    <!-- Language Switcher -->
+    <div class="lang-switcher">
+        <button class="lang-btn active" onclick="switchLang('zh-TW')" data-lang="zh-TW">繁</button>
+        <button class="lang-btn" onclick="switchLang('zh-CN')" data-lang="zh-CN">简</button>
+        <button class="lang-btn" onclick="switchLang('en')" data-lang="en">EN</button>
+    </div>
+
 <html lang="zh-TW">
 <head>
     <!-- Google AdSense 驗證碼 -->
@@ -526,6 +533,42 @@
             }
         }
     </style>
+
+    <!-- Language Switcher Styles -->
+    <style>
+        .lang-switcher {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            gap: 8px;
+            background: rgba(255,255,255,0.9);
+            padding: 8px 12px;
+            border-radius: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .lang-btn {
+            padding: 6px 14px;
+            border: 2px solid transparent;
+            border-radius: 20px;
+            background: transparent;
+            color: #43a047;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+        .lang-btn:hover {
+            background: rgba(67,160,71,0.1);
+        }
+        .lang-btn.active {
+            background: #43a047;
+            color: white;
+            border-color: #43a047;
+        }
+    </style>
 </head>
 <body>
     <div class="loading-overlay" id="loadingOverlay">
@@ -906,6 +949,219 @@
 
         // 頁面載入時更新計數
         updateViewCount();
-    </script>
+    
+        // ============================================
+        // 語言切換功能
+        // ============================================
+        const translations = {
+            'zh-TW': {
+                title: '🥬 素食問卷調查',
+                subtitle: '感謝您的填寫，您的意見對素食世界的貢獻非常重要',
+                q1: '1. 您的暱稱',
+                q1Placeholder: '請輸入您的暱稱',
+                q2: '2. 電子郵件',
+                q2Placeholder: 'example@email.com',
+                q3: '3. 您的年齡層',
+                q3Select: '請選擇...',
+                age18: '18 歲以下',
+                age1825: '18 - 25 歲',
+                age2635: '26 - 35 歲',
+                age3645: '36 - 45 歲',
+                age4655: '46 - 55 歲',
+                age55: '55 歲以上',
+                q4: '4. 您喜歡素食的程度',
+                veryLike: '😊 非常喜歡',
+                like: '🙂 喜歡',
+                normal: '😐 還好',
+                dislike: '😕 不喜歡',
+                q5: '5. 您感興趣的素食產品（可複選）',
+                q6: '6. 其他建議或意見',
+                q6Placeholder: '請輸入您的建議...',
+                q7: '7. 對此問卷的整體評分',
+                ratingText: '請點擊星星評分',
+                submit: '✅ 提交問卷',
+                successTitle: '🎉 提交成功！',
+                successMsg: '感謝您完成問卷，您的意見對素食世界的貢獻非常重要。',
+                reset: '再填一份',
+                adLabel: '贊助內容',
+                adTitle: '限時優惠 8 折',
+                adDesc: '即日起至月底，全館商品享 8 折優惠',
+                adCta: '馬上搶購 →',
+                adContact: '💼 想在這裡刊登廣告？',
+                adContactLink: '聯絡我們',
+                info1Title: '資料安全',
+                info1Desc: '您的資料將受到妥善保護',
+                info2Title: '瀏覽總數',
+                info3Title: '快速提交',
+                info3Desc: '只需幾分鐘即可完成',
+                footer: '© 2026 問卷調查系統 | 感謝您的參與',
+                loading: '提交中...'
+            },
+            'zh-CN': {
+                title: '🥬 素食问卷调查',
+                subtitle: '感谢您的填写，您的意见对素食世界的贡献非常重要',
+                q1: '1. 您的昵称',
+                q1Placeholder: '请输入您的昵称',
+                q2: '2. 电子邮件',
+                q2Placeholder: 'example@email.com',
+                q3: '3. 您的年龄层',
+                q3Select: '请选择...',
+                age18: '18 岁以下',
+                age1825: '18 - 25 岁',
+                age2635: '26 - 35 岁',
+                age3645: '36 - 45 岁',
+                age4655: '46 - 55 岁',
+                age55: '55 岁以上',
+                q4: '4. 您喜欢素食的程度',
+                veryLike: '😊 非常喜欢',
+                like: '🙂 喜欢',
+                normal: '😐 还好',
+                dislike: '😕 不喜欢',
+                q5: '5. 您感兴趣的素食产品（可复选）',
+                q6: '6. 其他建议或意见',
+                q6Placeholder: '请输入您的建议...',
+                q7: '7. 对此问卷的整体评分',
+                ratingText: '请点击星星评分',
+                submit: '✅ 提交问卷',
+                successTitle: '🎉 提交成功！',
+                successMsg: '感谢您完成问卷，您的意见对素食世界的贡献非常重要。',
+                reset: '再填一份',
+                adLabel: '赞助内容',
+                adTitle: '限时优惠 8 折',
+                adDesc: '即日起至月底，全馆商品享 8 折优惠',
+                adCta: '马上抢购 →',
+                adContact: '💼 想在这里刊登广告？',
+                adContactLink: '联系我们',
+                info1Title: '资料安全',
+                info1Desc: '您的资料将受到妥善保护',
+                info2Title: '浏览总数',
+                info3Title: '快速提交',
+                info3Desc: '只需几分钟即可完成',
+                footer: '© 2026 问卷调查系统 | 感谢您的参与',
+                loading: '提交中...'
+            },
+            'en': {
+                title: '🥬 Vegan Survey',
+                subtitle: 'Thank you for your participation. Your feedback is important to the vegan community.',
+                q1: '1. Your Nickname',
+                q1Placeholder: 'Enter your nickname',
+                q2: '2. Email',
+                q2Placeholder: 'example@email.com',
+                q3: '3. Your Age Group',
+                q3Select: 'Select...',
+                age18: 'Under 18',
+                age1825: '18 - 25',
+                age2635: '26 - 35',
+                age3645: '36 - 45',
+                age4655: '46 - 55',
+                age55: 'Over 55',
+                q4: '4. How much do you like vegan food?',
+                veryLike: '😊 Love it',
+                like: '🙂 Like it',
+                normal: '😐 It's okay',
+                dislike: '😕 Not a fan',
+                q5: '5. Vegan products you're interested in (Multiple)',
+                q6: '6. Other suggestions or comments',
+                q6Placeholder: 'Enter your suggestions...',
+                q7: '7. Overall rating for this survey',
+                ratingText: 'Click stars to rate',
+                submit: '✅ Submit Survey',
+                successTitle: '🎉 Submission Successful!',
+                successMsg: 'Thank you for completing the survey. Your feedback is valuable to the vegan community.',
+                reset: 'Fill again',
+                adLabel: 'Sponsored',
+                adTitle: 'Limited Time 20% OFF',
+                adDesc: 'Enjoy 20% off all items until end of month',
+                adCta: 'Shop Now →',
+                adContact: '💼 Want to advertise here?',
+                adContactLink: 'Contact Us',
+                info1Title: 'Data Security',
+                info1Desc: 'Your data is securely protected',
+                info2Title: 'Total Views',
+                info3Title: 'Quick Submit',
+                info3Desc: 'Complete in just a few minutes',
+                footer: '© 2026 Survey System | Thank you for participating',
+                loading: 'Submitting...'
+            }
+        };
+
+        let currentLang = 'zh-TW';
+
+        function switchLang(lang) {
+            currentLang = lang;
+            const t = translations[lang];
+
+            // Update button active state
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.lang === lang);
+            });
+
+            // Update header
+            document.querySelector('.header h1').textContent = t.title;
+            document.querySelector('.header p').textContent = t.subtitle;
+
+            // Update questions
+            const questions = document.querySelectorAll('.question');
+            questions[0].querySelector('label').innerHTML = t.q1 + ' <span class="required">*</span>';
+            questions[0].querySelector('input').placeholder = t.q1Placeholder;
+
+            questions[1].querySelector('label').innerHTML = t.q2 + ' <span class="required">*</span>';
+            questions[1].querySelector('input').placeholder = t.q2Placeholder;
+
+            questions[2].querySelector('label').textContent = t.q3;
+            const select = questions[2].querySelector('select');
+            select.options[0].text = t.q3Select;
+            select.options[1].text = t.age18;
+            select.options[2].text = t.age1825;
+            select.options[3].text = t.age2635;
+            select.options[4].text = t.age3645;
+            select.options[5].text = t.age4655;
+            select.options[6].text = t.age55;
+
+            questions[3].querySelector('label').innerHTML = t.q4 + ' <span class="required">*</span>';
+            const radioLabels = questions[3].querySelectorAll('.radio-option span');
+            radioLabels[0].textContent = t.veryLike;
+            radioLabels[1].textContent = t.like;
+            radioLabels[2].textContent = t.normal;
+            radioLabels[3].textContent = t.dislike;
+
+            questions[4].querySelector('label').textContent = t.q5;
+
+            questions[5].querySelector('label').textContent = t.q6;
+            questions[5].querySelector('textarea').placeholder = t.q6Placeholder;
+
+            questions[6].querySelector('label').textContent = t.q7;
+            document.getElementById('ratingText').textContent = t.ratingText;
+
+            // Update submit button
+            document.getElementById('submitBtn').textContent = t.submit;
+
+            // Update success message
+            document.querySelector('.success-msg h3').textContent = t.successTitle;
+            document.querySelector('.success-msg p').textContent = t.successMsg;
+            document.querySelector('.reset-btn').textContent = t.reset;
+
+            // Update ad section
+            document.querySelector('.ad-label').textContent = t.adLabel;
+            document.querySelector('.ad-title').textContent = t.adTitle;
+            document.querySelector('.ad-desc').textContent = t.adDesc;
+            document.querySelector('.ad-cta').textContent = t.adCta;
+            document.querySelector('.ad-contact p').innerHTML = t.adContact + ' <a href="mailto:freeganism-world@gmail.com?subject=廣告合作詢問">' + t.adContactLink + '</a>';
+
+            // Update info cards
+            const infoCards = document.querySelectorAll('.info-card');
+            infoCards[0].querySelector('.title').textContent = t.info1Title;
+            infoCards[0].querySelector('.desc').textContent = t.info1Desc;
+            infoCards[1].querySelector('.title').textContent = t.info2Title;
+            infoCards[2].querySelector('.title').textContent = t.info3Title;
+            infoCards[2].querySelector('.desc').textContent = t.info3Desc;
+
+            // Update footer
+            document.querySelector('.footer').textContent = t.footer;
+
+            // Update loading text
+            document.querySelector('.loading-overlay p').textContent = t.loading;
+        }
+</script>
 </body>
 </html>
